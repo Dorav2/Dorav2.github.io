@@ -288,7 +288,7 @@ function bindEvents() {
 async function init() {
   bindEvents();
   try {
-    const response = await fetch("manifest.json");
+    const response = await fetch("manifest.json?v=20261113-3");
     if (!response.ok) throw new Error("manifest-not-found");
     const data = await response.json();
     state.config = data.site;
