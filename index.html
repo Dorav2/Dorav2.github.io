@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="一个安静、清晰的个人文档空间。" />
+    <meta name="color-scheme" content="light dark" />
+    <title>我的个人文档</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      (() => {
+        const saved = localStorage.getItem("docs-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">跳到正文</a>
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="返回首页">
+        <span class="brand-mark" aria-hidden="true">文</span>
+        <span>
+          <strong id="site-title">我的个人文档</strong>
+          <small id="site-tagline">记录想法，也记录成长</small>
+        </span>
+      </a>
+
+      <div class="top-actions">
+        <button class="icon-button mobile-only" id="menu-button" type="button" aria-label="打开导航" aria-expanded="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        </button>
+        <button class="search-trigger" id="search-button" type="button" aria-label="搜索文档">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></svg>
+          <span>搜索文档</span>
+          <kbd>⌘ K</kbd>
+        </button>
+        <button class="icon-button" id="theme-button" type="button" aria-label="切换明暗主题">
+          <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" /></svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.4 8.4 0 0 1 8.9 3.8 8.5 8.5 0 1 0 20.2 15.1Z" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar" id="sidebar" aria-label="文档导航">
+        <nav id="site-nav">
+          <a class="nav-home" href="#home"><span aria-hidden="true">⌂</span>首页</a>
+          <div class="nav-loading">正在加载目录…</div>
+        </nav>
+        <footer class="sidebar-footer">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span>静态网站 · 无广告</span>
+        </footer>
+      </aside>
+
+      <button class="sidebar-backdrop" id="sidebar-backdrop" type="button" aria-label="关闭导航"></button>
+
+      <main id="content" class="content" tabindex="-1">
+        <div class="loading-state" aria-live="polite">
+          <span class="spinner" aria-hidden="true"></span>
+          正在打开文档…
+        </div>
+      </main>
+
+      <aside class="toc" id="toc" aria-label="页内目录"></aside>
+    </div>
+
+    <dialog class="search-dialog" id="search-dialog">
+      <form class="search-panel" id="search-form" method="dialog">
+        <div class="search-field">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></svg>
+          <input id="search-input" type="search" placeholder="搜索标题、摘要和正文…" autocomplete="off" />
+          <button class="close-button" value="close" aria-label="关闭搜索" type="submit">ESC</button>
+        </div>
+        <div class="search-results" id="search-results">
+          <p class="search-hint">输入关键词，快速找到一篇文档。</p>
+        </div>
+      </form>
+    </dialog>
+
+    <noscript>
+      <div class="noscript">这个文档站需要启用 JavaScript 才能读取 Markdown 内容。</div>
+    </noscript>
+    <script src="app.js" defer></script>
+  </body>
+</html>
