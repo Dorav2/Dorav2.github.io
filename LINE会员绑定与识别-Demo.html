@@ -1,0 +1,1081 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LINE 会员绑定与识别 · 可点击演示</title>
+<style>
+  :root{
+    --ink:#17181c; --ink2:#8a8f98; --ink3:#b6bcc4; --line:#e3e6ea; --bg:#e9edf1; --card:#fff;
+    --page:#F0F2F4;
+    /* 主按钮=品牌橙（primary-5/6/7），渠道品牌色只做描边与浅底；hex 为示意值，落地以 GPOS token 为准 */
+    --primary-5:#f2811d; --primary-6:#d96c0f; --primary-7:#fff6ec; --primary-1:#ffe3c7;
+    --success-5:#1a9c4b; --success-1:#eafaf0; --warning-5:#f2811d; --warning-1:#fff5e0;
+    --danger-5:#cf222e; --danger-1:#ffeaea; --line-green:#cfe6d6;
+    --text-2:var(--ink); --text-4:var(--ink2);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--text-2);line-height:1.5;padding:20px}
+  .app{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:340px 1fr;gap:18px;align-items:start}
+  h1{font-size:17px;margin-bottom:4px}
+  .demo-title{margin:0;line-height:1.25}
+  .demo-title-kicker{display:flex;align-items:center;height:28px;margin-bottom:6px;font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--primary-6)}
+  .demo-title-main{display:block;font-size:18px;font-weight:700;letter-spacing:.1px;color:var(--text-2)}
+  .demo-title-main.en{font-size:15px;line-height:1.35;letter-spacing:0}
+  .sub{font-size:12px;color:var(--text-4)}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+  .panel-head{display:block;position:relative;margin-bottom:16px;padding-top:2px}
+  .panel-head>div:first-child{padding-right:0}
+  .panel-head .lang-switch{position:absolute;top:0;right:0}
+  .lang-switch{display:flex;flex:none;border:1px solid var(--line);border-radius:999px;padding:2px;background:#f7f8fa}
+  .lang-switch button{border:0;background:transparent;color:var(--text-4);font:600 11px/1.2 inherit;padding:5px 8px;border-radius:999px;cursor:pointer}
+  .lang-switch button.on{background:var(--card);color:var(--primary-6);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .panel h2{font-size:12px;letter-spacing:.4px;color:var(--text-4);margin:14px 0 8px;font-weight:700}
+  .panel h2:first-of-type{margin-top:0}
+  .scenario-label{display:flex;align-items:center;gap:7px;margin:10px 0 6px;font-size:11.5px;font-weight:700;color:var(--text-2)}
+  .scenario-label::after{content:"";height:1px;background:#eef0f3;flex:1}
+  .scenario-label:first-of-type{margin-top:0}
+  .simple-only{display:none}
+  body.simple-mode .simple-only{display:block}
+  body.simple-mode .full-only,body.simple-mode .flow-section,body.simple-mode .foot{display:none}
+  body.focus-mode .panel,body.focus-mode .path,body.focus-mode .flow-section,body.focus-mode .foot{display:none}
+  body.focus-mode .app{display:block;max-width:326px}
+  body.focus-mode .stage{display:block}
+  .btn{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fbfcfd;border-radius:8px;padding:8px 10px;font-size:12.5px;cursor:pointer;margin-bottom:6px;font-family:inherit;color:var(--text-2)}
+  .btn:hover{border-color:var(--primary-5);color:var(--primary-6)}
+  .btn.on{background:var(--primary-7);border-color:var(--primary-5);color:var(--primary-6);font-weight:600}
+  .st{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #f2f4f6}
+  .st:last-child{border-bottom:none}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
+  .dot.g{background:var(--success-5)}.dot.o{background:var(--warning-5)}.dot.n{background:#c7ccd2}
+  .stage{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+  .phone{width:326px;height:672px;background:var(--page);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;position:relative;box-shadow:0 1px 0 rgba(0,0,0,.03)}
+  .phone.white,.phone.white .stat,.phone.white .nav,.phone.white .body{background:#fff}
+  .stat{height:26px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:10px}
+  .stat .back{color:var(--text-4);cursor:pointer;margin-right:6px}
+  .nav{height:38px;flex:none;display:flex;align-items:center;gap:8px;padding:0 12px;font-size:13px;font-weight:600;background:var(--page)}
+  .nav .back{font-size:12px;color:var(--text-4);cursor:pointer;font-weight:400}
+  .body{flex:1;overflow:auto;padding:0 12px 12px}
+  .tabs{height:52px;flex:none;background:var(--card);border-top:1px solid var(--line);display:flex;align-items:center}
+  .tabs div{flex:1;text-align:center;font-size:9.5px;color:var(--text-4)}
+  .tabs div i{display:block;font-size:15px;font-style:normal}
+  .tabs div.act{color:var(--primary-5);font-weight:700}
+  .t{font-size:15px;font-weight:700;padding:14px 4px 8px}
+  .p{font-size:12px;color:var(--text-4);display:block;padding:0 4px 10px}
+  .b{border-radius:999px;padding:12px;font-size:13.5px;text-align:center;font-weight:600;margin-bottom:8px;cursor:pointer;border:1px solid transparent}
+  .b.pri{background:var(--primary-5);color:#fff}
+  .b.pri:hover{background:var(--primary-6)}
+  .b.line{background:var(--card);border:1px solid var(--line-green);color:#0b7d3a;font-weight:600}
+  .b.line::before{content:"◉ ";color:#06c755}
+  .b.ghost{background:var(--card);border:1px solid var(--line);color:var(--text-4);font-weight:400}
+  .b.dis{background:var(--card);border:1px dashed var(--line);color:var(--ink3);cursor:not-allowed}
+  .card{background:var(--card);border-radius:10px;margin-bottom:10px;overflow:hidden}
+  .card.edge{border:1px solid var(--primary-5)}
+  .card.edgeG{border:1px solid var(--line-green);background:var(--success-1)}
+  .row{display:flex;align-items:center;gap:8px;padding:11px 12px;font-size:12.5px;border-bottom:1px solid #f2f4f6}
+  .row:last-child{border-bottom:none}
+  .row.blk{display:block;font-size:11px;color:var(--text-4);border-bottom:none}
+  .row .v{margin-left:auto;font-size:11.5px;color:var(--text-4)}
+  .row.hl{background:var(--primary-7);color:var(--primary-6);font-weight:600}
+  .ic{width:16px;text-align:center;color:var(--text-4);flex:none}
+  .ar{margin-left:4px;color:var(--ink3)}
+  .in{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:12.5px;margin-bottom:8px;width:100%;color:var(--text-2)}
+  .in.ro{background:#f7f8fa;color:var(--text-4)}
+  .in.err{border-color:var(--danger-5)}
+  .inwrap{padding:0 4px 10px}
+  .field-label{display:block;font-size:11px;color:var(--text-4);margin:0 2px 6px}
+  .required{color:var(--danger-5);margin-left:2px}
+  .err{font-size:11px;color:var(--danger-5);border-left:2px solid var(--danger-5);padding-left:6px;margin:-2px 4px 8px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;padding:0 4px 10px}
+  .chip{font-size:11.5px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer;color:var(--text-4)}
+  .chip.on{border-color:var(--primary-5);color:var(--primary-6);background:var(--primary-7);font-weight:600}
+  .badge{font-size:10px;padding:1px 7px;border-radius:999px}
+  .badge.on{background:var(--success-1);color:var(--success-5)}
+  .badge.off{background:var(--warning-1);color:var(--warning-5)}
+  .badge.na{background:#eceff2;color:var(--text-4)}
+  .mask{position:absolute;inset:26px 0 0;background:rgba(240,242,244,.92);display:flex;align-items:center;justify-content:center;padding:16px}
+  .guide{background:var(--card);border-radius:12px;padding:16px;text-align:center;width:100%}
+  .guide h3{font-size:14px;margin-bottom:4px}
+  .guide p{font-size:11.5px;color:var(--text-4);margin-bottom:12px}
+  .logo{width:56px;height:56px;border-radius:50%;background:#fff;display:inline-flex;align-items:center;justify-content:center;overflow:hidden}
+  .logo img{width:100%;height:100%;display:block;object-fit:cover}
+  .fild{display:flex;align-items:center;background:#f2f4f7;border-radius:999px;padding:0 12px;height:44px;margin-bottom:10px}
+  .fild input{flex:1;border:none;background:transparent;font-size:13.5px;outline:none;color:var(--text-2);min-width:0}
+  .fild .cc{font-size:13px;cursor:pointer;white-space:nowrap}
+  .fild .sep{width:1px;height:16px;background:var(--line);margin:0 10px}
+  .fild .ic2{color:#98a1ab;font-size:14px;margin-right:8px}
+  .get{font-size:12px;color:var(--primary-6);border:1px solid var(--primary-5);border-radius:999px;padding:5px 12px;cursor:pointer;background:var(--card);white-space:nowrap}
+  .get.dis{color:var(--ink3);border-color:var(--line);cursor:default;background:transparent}
+  .agree{display:flex;gap:7px;align-items:flex-start;font-size:11.5px;margin:4px 2px 14px;cursor:pointer}
+  .agree a{color:var(--primary-6)}
+  .cbx{width:15px;height:15px;border-radius:4px;border:1px solid var(--line);flex:none;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;background:var(--card)}
+  .cbx.on{background:var(--primary-5);border-color:var(--primary-5)}
+  .b.big{padding:13px;font-size:14px}
+  .b.big.off{background:var(--primary-1);color:#f8c99a;cursor:default}
+  .refline{font-size:10.5px;color:var(--ink3);text-align:right;margin:-4px 6px 8px}
+  .center{text-align:center;padding:40px 10px}
+  .jump{display:flex;align-items:center;justify-content:center;gap:12px;margin:18px 0 22px}
+  .jumpapp{width:78px;height:78px;border:1px solid var(--line);border-radius:16px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:10px;color:var(--text-4)}
+  .jumpapp i{width:34px;height:34px;border-radius:10px;background:var(--primary-7);color:var(--primary-6);display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:700;font-size:13px}
+  .jumpapp.lineapp i{background:#06c755;color:#fff}.jumparrow{font-size:23px;color:var(--ink3)}
+  .spin{width:24px;height:24px;border:2px solid var(--ink3);border-top-color:var(--primary-5);border-radius:50%;margin:0 auto 12px;animation:sp 1s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .toast{position:absolute;left:14px;right:14px;bottom:64px;background:rgba(23,24,28,.88);color:#fff;font-size:11.5px;text-align:center;padding:8px;border-radius:8px}
+  .note{font-size:11px;color:var(--ink3);padding:0 4px}
+  .path{font-size:11.5px;color:var(--text-4);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:12px;max-width:326px}
+  .path b{color:var(--primary-6)}
+  /* 后台 */
+  .pc{width:100%;max-width:760px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .pc .hd{padding:10px 14px;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--text-4);background:#fafbfc;display:flex;justify-content:space-between}
+  .pcwrap{display:flex;min-height:380px}
+  .side{width:160px;flex:none;border-right:1px solid var(--line);background:var(--page);padding:8px 0;font-size:11.5px;color:var(--text-4)}
+  .side div{padding:7px 12px}
+  .side div.on{background:var(--primary-7);color:var(--primary-6);font-weight:600;border-right:2px solid var(--primary-5)}
+  .side div.grp{color:var(--ink3);font-size:10.5px;padding-top:9px}
+  .main{flex:1;padding:12px;min-width:0}
+  .pgt{font-size:15px;font-weight:700;margin-bottom:6px}
+  .legend{display:flex;gap:12px;align-items:center;font-size:11px;color:var(--text-4);border:1px solid var(--line);border-radius:6px;padding:6px 9px;margin-bottom:9px;background:var(--page);flex-wrap:wrap}
+  table{width:100%;border-collapse:collapse;font-size:11px}
+  th{text-align:left;padding:7px 8px;background:#f7f8fa;color:var(--text-4);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:7px 8px;border-bottom:1px solid #f2f4f6;white-space:nowrap}
+  tr.clk{cursor:pointer}
+  tr.clk:hover td{background:var(--primary-7)}
+  .kv{display:flex;justify-content:space-between;font-size:11.5px;padding:6px 0;border-bottom:1px solid #f2f4f6}
+  .kv span:last-child{color:var(--text-4)}
+  .foot{grid-column:1/-1;font-size:11px;color:var(--text-4);border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
+  .flow-section{grid-column:1/-1;margin-top:4px}
+  .flow-section h2{font-size:16px;margin-bottom:4px}
+  .flow-section>.sub{margin-bottom:12px}
+  .flow-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .flow-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;min-width:0}
+  .flow-card.wide{grid-column:1/-1}
+  .flow-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:14px;font-weight:700}
+  .flow-no{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:var(--primary-7);color:var(--primary-6);font-size:11px}
+  .flow-row{display:flex;align-items:center;gap:6px;min-width:0}
+  .flow-step{flex:1;min-width:0;background:#f7f8fa;border:1px solid var(--line);border-radius:8px;padding:9px 7px;text-align:center;font-size:11.5px}
+  .flow-step strong{display:block;font-size:11.5px;font-weight:700;margin-bottom:2px}
+  .flow-step small{display:block;color:var(--text-4);font-size:10px}
+  .flow-arrow{color:var(--ink3);font-size:16px;flex:none}
+  .flow-decision{display:flex;align-items:center;gap:8px;margin:10px 0;color:var(--primary-6);font-size:10.5px;font-weight:700}
+  .flow-decision::before,.flow-decision::after{content:"";height:1px;background:var(--primary-1);flex:1}
+  .flow-branches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .flow-branch{border-left:3px solid var(--line);background:#fafbfc;border-radius:8px;padding:9px 10px;font-size:11px}
+  .flow-branch.ok{border-left-color:var(--success-5);background:var(--success-1)}
+  .flow-branch.new{border-left-color:var(--primary-5);background:var(--primary-7)}
+  .flow-branch b{display:block;margin-bottom:5px;font-size:11.5px}
+  .flow-chain{display:flex;align-items:center;flex-wrap:wrap;gap:4px;color:var(--text-4)}
+  .flow-chain span{color:var(--text-2)}
+  .flow-note{margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);font-size:10.5px;color:var(--text-4)}
+  @media(max-width:900px){.app{grid-template-columns:1fr}.flow-grid{grid-template-columns:1fr}.flow-card.wide{grid-column:1}.foot,.flow-section{grid-column:1}.panel{max-width:none}}
+  @media(max-width:520px){body{padding:10px}.flow-row{align-items:stretch;flex-direction:column}.flow-arrow{transform:rotate(90deg);text-align:center}.flow-branches{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="panel">
+    <div class="panel-head">
+      <div><h1>LINE 会员绑定与识别 · 演示</h1></div>
+      <div class="lang-switch" aria-label="Language"><button type="button" data-lang="zh" class="on" onclick="setLang('zh')">中</button><button type="button" data-lang="en" onclick="setLang('en')">EN</button></div>
+    </div>
+    <h2>核心场景</h2>
+    <button class="btn simple-only" onclick="scenario('h5Entry')">从 H5 登录/注册</button>
+    <button class="btn simple-only" onclick="scenario('richMenu')">从 LINE 登录/注册</button>
+    <div class="simple-only">
+      <h2>异常场景</h2>
+      <button class="btn" onclick="scenario('conflict')">冲突：该 LINE 已绑定其他会员</button>
+      <button class="btn" onclick="scenario('phoneConflict')">冲突：该手机号已绑定其他 LINE</button>
+    </div>
+    <div class="full-only">
+      <div class="scenario-label">H5 手机号</div>
+      <button class="btn" onclick="scenario('phone')">已有会员登录</button>
+      <button class="btn" onclick="scenario('phoneRegister')">新会员注册</button>
+      <div class="scenario-label">H5 使用 LINE 授权</div>
+      <button class="btn" onclick="scenario('lineExisting')">已有会员登录并绑定 LINE</button>
+      <button class="btn" onclick="scenario('lineLogin')">新会员注册并绑定 LINE</button>
+      <div class="scenario-label">LINE 内与会员绑定</div>
+      <button class="btn" onclick="scenario('memberBind')">从会员中心绑定 LINE</button>
+      <button class="btn" onclick="scenario('richMenu')">从 Rich Menu 登录或注册</button>
+      <button class="btn" onclick="scenario('bound')">已绑定会员免登录进入</button>
+      <button class="btn" onclick="scenario('manageBinding')">管理或解除 LINE 绑定</button>
+      <h2>异常场景</h2>
+      <button class="btn" onclick="scenario('conflict')">冲突：该 LINE 已绑定其他会员</button>
+      <button class="btn" onclick="scenario('phoneConflict')">冲突：该手机号已绑定其他 LINE</button>
+    </div>
+    <h2>当前状态</h2>
+    <div id="state"></div>
+    <h2>操作</h2>
+    <button class="btn" onclick="back()">← 返回上一步</button>
+    <button class="btn" onclick="resetAll()">重置全部状态</button>
+  </div>
+
+  <div>
+    <div class="path" id="path"></div>
+    <div class="stage" id="stage"></div>
+  </div>
+
+  <section class="flow-section" aria-labelledby="flow-title">
+    <h2 id="flow-title">H5 与 LINE 登录/注册流程</h2>
+    <div class="sub">三种入口共用同一套 CRM 会员底座，但身份获取与绑定路径不同。</div>
+    <div class="flow-grid">
+      <article class="flow-card">
+        <div class="flow-head"><span class="flow-no">01</span>普通 H5 登录/注册</div>
+        <div class="flow-row">
+          <div class="flow-step"><strong>打开会员 H5</strong><small>桌码 / 会员注册码 / 外部链接</small></div><span class="flow-arrow">→</span>
+          <div class="flow-step"><strong>手机号＋验证码</strong><small>同一页面完成验证</small></div><span class="flow-arrow">→</span>
+          <div class="flow-step"><strong>CRM 查询手机号</strong><small>判断是否已有会员</small></div>
+        </div>
+        <div class="flow-decision">手机号判断结果</div>
+        <div class="flow-branches">
+          <div class="flow-branch ok"><b>已有会员</b><div class="flow-chain"><span>登录成功</span> → <span>进入会员中心</span></div></div>
+          <div class="flow-branch new"><b>新用户</b><div class="flow-chain"><span>填写会员资料</span> → <span>创建会员</span> → <span>进入会员中心</span></div></div>
+        </div>
+        <div class="flow-note">该流程只建立 CRM 会员身份，不会自动建立 LINE 绑定关系。</div>
+      </article>
+
+      <article class="flow-card">
+        <div class="flow-head"><span class="flow-no">02</span>H5 使用 LINE 授权登录/注册</div>
+        <div class="flow-row">
+          <div class="flow-step"><strong>会员 H5 登录页</strong><small>点击 Login with LINE</small></div><span class="flow-arrow">→</span>
+          <div class="flow-step"><strong>LINE 官方授权</strong><small>获取 LINE User ID</small></div><span class="flow-arrow">→</span>
+          <div class="flow-step"><strong>返回会员 H5</strong><small>手机号＋验证码</small></div>
+        </div>
+        <div class="flow-decision">CRM 查询手机号</div>
+        <div class="flow-branches">
+          <div class="flow-branch ok"><b>已有会员</b><div class="flow-chain"><span>关联 LINE 身份</span> → <span>进入会员中心</span></div></div>
+          <div class="flow-branch new"><b>新用户</b><div class="flow-chain"><span>填写会员资料</span> → <span>创建会员并关联 LINE</span> → <span>进入会员中心</span></div></div>
+        </div>
+        <div class="flow-note">LINE 授权用于取得身份，不代表已经关注商户 OA；未关注时仍需引导添加好友。</div>
+      </article>
+
+      <article class="flow-card wide">
+        <div class="flow-head"><span class="flow-no">03</span>LINE Rich Menu 登录/注册</div>
+        <div class="flow-row">
+          <div class="flow-step"><strong>点击 Rich Menu</strong><small>进入会员中心入口</small></div><span class="flow-arrow">→</span>
+          <div class="flow-step"><strong>打开 LIFF</strong><small>获取 LINE User ID</small></div><span class="flow-arrow">→</span>
+          <div class="flow-step"><strong>CRM 查询绑定关系</strong><small>LINE 身份是否已关联会员</small></div>
+        </div>
+        <div class="flow-decision">LINE 绑定判断结果</div>
+        <div class="flow-branches">
+          <div class="flow-branch ok"><b>已绑定会员</b><div class="flow-chain"><span>免输入</span> → <span>直接进入会员中心</span></div></div>
+          <div class="flow-branch new"><b>未绑定</b><div class="flow-chain"><span>手机号＋验证码</span> → <span>已有会员：建立绑定</span> / <span>新用户：填写资料并创建会员</span> → <span>进入会员中心</span></div></div>
+        </div>
+        <div class="flow-note">从 Rich Menu 进入时顾客已经是 OA 好友；完成绑定后可使用 LINE 身份免登录进入。</div>
+      </article>
+    </div>
+  </section>
+
+  <div class="foot">
+    视觉与组件沿用我方现有规范：C 端按 Figma《V 2.16 个人中心》（375×812、页面底 #F0F2F4、卡片白底圆角、品牌橙主按钮、<b>C 端按钮统一胶囊形状</b>、状态图标带图例），后台按 GPOS_Web 规范（1、表格页 / pageheader / 表格_输入类 / 3、详情页，后台按钮保持规范方形，不与 C 端互套）。
+    渠道品牌色（LINE 绿）仅用于描边按钮与浅底卡片，不作大面积实心按钮；按钮文案均带动作对象。
+    顾客可先手机号入会后从会员首页 Add LINE，也可在登录页直接 Login with LINE。P0 支持顾客通过手机号 OTP 自助解绑；发生手机号绑定冲突时，可验证身份后完成换绑。
+  </div>
+</div>
+
+<script>
+const S = {
+  entry: '', channel: true, loginWay: '', member: false, phone: null,
+  bound: false, friend: false, status: 'Active', opened: false,
+  otpFails: 0, limited: false, ref: 'W48i', branch: 'Jan cafe', known: false, sent: false, phErr: false, otpErr: false, agree: false, otp: '', cd: 60, timer: null, history: [], lineAuthorized:false, phoneVerified:false, authIntent:'', forceConflict:false,
+  name:'', birthday:'', gender:'', regErr:false
+};
+const UI = { lang:'zh' };
+const EN = {
+  "LINE 会员绑定与识别 · 可点击演示":"LINE Member Linking & Recognition · Interactive Demo",
+  "LINE 会员绑定与识别 · 演示":"LINE Member Linking & Recognition · Demo",
+  "H5 与 LINE 登录注册 · 演示":"H5 & LINE Login / Registration · Demo",
+  "按 Wongnai 实测录屏还原 · 状态为内存变量，刷新即重置":"Based on the tested Wongnai flow · Demo state resets on refresh",
+  "场景":"Scenarios", "核心场景":"Core scenarios", "核心场景（登录 / 注册 / 绑定）":"Core scenarios (Login / Registration / Linking)",
+  "H5 手机号":"H5 with phone", "已有会员登录":"Existing member login", "新会员注册":"New member registration",
+  "从 H5 登录/注册":"Login / register from H5", "从 LINE 登录/注册":"Login / register from LINE",
+  "从 H5 登录或注册":"Login or register from H5", "H5 登录/注册入口":"H5 login / registration entry",
+  "请选择要演示的会员识别结果。真实流程由 CRM 根据手机号自动判断。":"Choose a member lookup result for this demo. In production, CRM determines it automatically from the phone number.",
+  "已有会员：手机号登录":"Existing member: phone login", "新用户：手机号注册":"New customer: phone registration",
+  "H5 使用 LINE 授权":"H5 with LINE authorization", "已有会员登录并绑定 LINE":"Existing member: log in and link LINE",
+  "新会员注册并绑定 LINE":"New member: register and link LINE", "LINE 内与会员绑定":"Inside LINE & member linking",
+  "从会员中心绑定 LINE":"Link LINE from Member Center", "从 Rich Menu 登录或注册":"Log in or register from Rich Menu",
+  "已绑定会员免登录进入":"Linked member: enter without login",
+  "管理或解除 LINE 绑定":"Manage or unlink LINE",
+  "异常场景":"Exception scenarios", "当前状态":"Current status", "操作":"Actions",
+  "路径① 手机号登录（已有会员）":"Path 1 · Phone login (existing member)",
+  "路径② 手机号注册（新会员）":"Path 2 · Phone registration (new member)",
+  "路径③ Login with LINE（新会员）":"Path 3 · Login with LINE (new member)",
+  "路径④ Login with LINE（已有会员）":"Path 4 · Login with LINE (existing member)",
+  "路径⑤ 会员首页 Add LINE":"Path 5 · Add LINE from Member Home",
+  "路径⑥ LINE Rich Menu 登录/注册":"Path 6 · Login / register from LINE Rich Menu",
+  "已绑定顾客使用 LINE 登录":"Linked customer logs in with LINE",
+  "冲突：该 LINE 已绑定其他会员":"Conflict: LINE is linked to another member",
+  "冲突：该手机号已绑定其他 LINE":"Conflict: Phone is linked to another LINE account",
+  "会员状态异常（P0 兜底）":"Abnormal member status (P0 fallback)",
+  "通道未配置":"LINE channel not configured", "验证次数达上限":"Verification limit reached",
+  "← 返回上一步":"← Back", "重置全部状态":"Reset all",
+  "返回":"Back",
+  "演示路径：":"Demo path: ",
+  "手机号登录 / 注册":"Phone login / registration", "H5 跳转 LINE":"H5 opens LINE",
+  "LINE 授权后输入手机号":"Enter phone after LINE authorization", "OTP 验证":"OTP verification",
+  "注册资料":"Registration details", "会员中心（我的）":"Member Center (Me)",
+  "账号与渠道":"Account & channel", "LINE 授权":"LINE authorization", "授权回跳":"Authorization redirect",
+  "绑定结果":"Linking result", "好友添加回执":"Friend-add confirmation", "冲突错误页":"Conflict error",
+  "状态异常页":"Abnormal status", "风控上限页":"Verification limit", "通道未配置页":"Channel not configured",
+  "LIFF 识别中":"LIFF recognition", "商家后台":"Merchant admin", "后台会员详情":"Member details",
+  "当前环境":"Current environment", "LINE 官方页面":"Official LINE page", "会员 H5 → LINE":"Member H5 → LINE",
+  "LINE → 会员 H5":"LINE → Member H5", "LINE 内 LIFF":"LIFF inside LINE", "会员 H5":"Member H5", "入口":"Entry",
+  "会员首页 Add LINE":"Add LINE from Member Home", "手机号登录页":"Phone login page",
+  "通道配置":"Channel setup", "已配置":"Configured", "未配置":"Not configured",
+  "会员":"Member", "已登录 / 已注册":"Logged in / registered", "未登录":"Not logged in",
+  "LINE 绑定":"LINE linking", "已绑定":"Linked", "未绑定":"Not linked",
+  "OA 好友":"OA friend", "已关注":"Following", "未关注":"Not following",
+  "LINE OA 好友状态":"LINE OA friend status", "CRM 消息可触达":"CRM message reachable",
+  "可触达":"Reachable", "是":"Yes", "否":"No", "会员状态":"Member status",
+  "品牌页":"Brand", "点单":"Order", "订单":"Orders", "我的":"Me", "门店":"Store",
+  "‹ 返回":"‹ Back", "黑金会员":"Black Gold Member",
+  "享受25%折扣 · 满 2,000 元可保级（超长单行截断）":"Enjoy 25% off · Spend 2,000 to retain tier",
+  "积分":"Points", "储值余额":"Stored balance", "去绑定 ›":"Link now ›",
+  "切换语言":"Language", "简体中文 ›":"English ›", "就餐人数":"Party size",
+  "就餐类型":"Dining type", "堂食 ›":"Dine-in ›", "门店信息":"Store information", "切换门店":"Switch store",
+  "Add LINE and enjoy special benefits!":"Add LINE and enjoy special benefits!",
+  "连接 LINE 后可用 LINE 登录，并接收会员权益通知":"Link LINE to sign in and receive membership notifications",
+  "添加店铺好友，领取多重权益":"Add the store as a friend to enjoy more benefits",
+  "关注后才能收到订单、积分与活动通知":"Follow the store to receive order, point and campaign notifications",
+  "添加好友":"Add friend", "以后再说":"Not now",
+  "确认会员手机号":"Confirm member phone", "区号选择：+66（泰国）/ +86 …":"Country code: +66 (Thailand) / +86 …",
+  "请输入有效的手机号码":"Enter a valid phone number", "请输入验证码":"Enter verification code",
+  "验证码错误或已过期":"The code is incorrect or expired", "获取":"Get code",
+  "我已阅读并同意":"I have read and agree to ", "《隐私政策》":"Privacy Policy",
+  "《用户服务协议》":"User Agreement", "《服务条款》":"Terms of Service", "、":" and ", "与":" and ",
+  "登录/注册":"Log in / Register", "或":"or", "通过 LINE 登录":"Login with LINE",
+  "LINE 授权已完成，请在同一页面完成手机号和验证码验证；本页不再重复展示 Login with LINE。":"LINE authorization is complete. Verify your phone and OTP on this page; Login with LINE is not shown again.",
+  "手机号登录/注册沿用现有页面：手机号、验证码和协议同屏。":"The existing phone login/registration page is retained: phone, OTP and consent stay on one page.",
+  "确认手机号":"Confirm phone number", "输入手机号":"Enter phone number",
+  "用于识别已有会员或注册新会员":"Used to identify an existing member or register a new one",
+  "请输入手机号":"Enter phone number", "继续":"Continue",
+  "Wongnai 实测顺序：LINE 授权成功后，尚未绑定的用户先输入手机号；此处不再次展示 Login with LINE。":"Tested Wongnai sequence: after LINE authorization, an unlinked user enters a phone number first; Login with LINE is not repeated here.",
+  "验证手机号":"Verify phone number", "确认并继续":"Confirm and continue",
+  "Wongnai 实测：LINE 授权后，新会员先填写资料再 OTP；已有会员跳过资料页，直接 OTP。":"Tested Wongnai flow: after LINE authorization, a new member completes details before OTP; an existing member goes directly to OTP.",
+  "Wongnai 实测：手机号确认后进入独立 OTP 页面，验证成功后进入会员首页。":"Tested Wongnai flow: after confirming the phone number, the user completes OTP and enters Member Home.",
+  "注册会员":"Member registration", "会员姓名":"Member name", "（已验证）":" (verified)",
+  "姓名":"Name", "手机号":"Phone number", "性别":"Gender", "必填":"Required",
+  "请完整填写姓名、手机号、性别和出生日期":"Complete name, phone number, gender and date of birth",
+  "出生日期（年 / 月 / 日）":"Date of birth (YYYY / MM / DD)", "出生日期（年、月、日）":"Date of birth (year, month, day)",
+  "男":"Male", "女":"Female", "不指定":"Prefer not to say", "提交注册资料":"Submit registration",
+  "入会门店由注册二维码中的门店参数自动记录，顾客无需填写；通过 LINE 登录的新用户，资料填写完成后再进行 OTP。":"The registration QR automatically records the joining store; the customer does not enter it. A new LINE user completes OTP after submitting their profile.",
+  "‹ 演示：回登录页":"‹ Demo: back to login", "会员中心":"Member Center",
+  "正在识别会员身份…":"Recognizing member identity…",
+  "识别成功 → 直接进入会员中心（零输入）":"Recognized → Open Member Center (no input)",
+  "识别失败 → 自动落到电话号码输入页":"Not recognized → Open phone-number entry",
+  "模拟识别完成":"Simulate successful recognition", "模拟识别失败（回落手机号）":"Simulate failure (use phone)",
+  "从 LINE Rich Menu 打开会员中心":"Open Member Center from LINE Rich Menu",
+  "系统先通过 LIFF 识别 LINE 身份，再判断绑定关系":"The system identifies the LINE user through LIFF, then checks the member link",
+  "已绑定会员：免登录进入":"Linked member: continue without login",
+  "已有会员：手机号验证并绑定":"Existing member: verify phone and link",
+  "新用户：手机号验证并注册":"New user: verify phone and register",
+  "Rich Menu 入口无需再次点击 Login with LINE；未绑定用户继续完成手机号验证。":"The Rich Menu entry does not show Login with LINE again. An unlinked user continues with phone verification.",
+  "H5 与 LINE 内登录/注册流程":"Login / Registration in H5 and LINE",
+  "两种入口共用同一套 CRM 会员底座，区别在于是否先获得 LINE 身份。":"Both entries share the same CRM member foundation. The difference is whether LINE identity is obtained first.",
+  "H5 与 LINE 登录/注册流程":"H5 and LINE Login / Registration Flows",
+  "三种入口共用同一套 CRM 会员底座，但身份获取与绑定路径不同。":"All three entries share the same CRM member foundation, but identity acquisition and linking paths differ.",
+  "普通 H5 登录/注册":"Standard H5 Login / Registration",
+  "打开会员 H5":"Open Member H5", "桌码 / 会员注册码 / 外部链接":"Table QR / Member QR / External link",
+  "手机号＋验证码":"Phone + OTP", "同一页面完成验证":"Complete verification on one page",
+  "CRM 查询手机号":"CRM checks phone number", "判断是否已有会员":"Check whether a member already exists",
+  "手机号判断结果":"Phone lookup result", "已有会员":"Existing member", "新用户":"New customer",
+  "登录成功":"Login successful", "进入会员中心":"Enter Member Center", "填写会员资料":"Complete member profile",
+  "创建会员":"Create member",
+  "该流程只建立 CRM 会员身份，不会自动建立 LINE 绑定关系。":"This flow creates a CRM member identity only; it does not automatically link a LINE identity.",
+  "H5 使用 LINE 授权登录/注册":"H5 Login / Registration with LINE Authorization",
+  "会员 H5 登录页":"Member H5 login page", "点击 Login with LINE":"Tap Login with LINE",
+  "LINE 官方授权":"Official LINE authorization", "关联 LINE 身份":"Link LINE identity",
+  "创建会员并关联 LINE":"Create member and link LINE",
+  "LINE 授权用于取得身份，不代表已经关注商户 OA；未关注时仍需引导添加好友。":"LINE authorization obtains the customer's identity but does not mean the merchant OA is followed. If not following, prompt the customer to add the OA as a friend.",
+  "LINE Rich Menu 登录/注册":"LINE Rich Menu Login / Registration",
+  "点击 Rich Menu":"Tap Rich Menu", "进入会员中心入口":"Open the Member Center entry",
+  "打开 LIFF":"Open LIFF", "获取 LINE User ID":"Get LINE User ID",
+  "CRM 查询绑定关系":"CRM checks the link", "LINE 身份是否已关联会员":"Check whether the LINE identity is linked to a member",
+  "LINE 绑定判断结果":"LINE link result", "已绑定会员":"Linked member", "免输入":"No input",
+  "直接进入会员中心":"Enter Member Center directly", "未绑定":"Not linked",
+  "已有会员：建立绑定":"Existing member: create link", "新用户：填写资料并创建会员":"New customer: complete profile and create member",
+  "从 Rich Menu 进入时顾客已经是 OA 好友；完成绑定后可使用 LINE 身份免登录进入。":"A customer entering from Rich Menu is already an OA friend. Once linked, the LINE identity can open Member Center without another login.",
+  "店铺名称店铺农村店店铺":"Store name", "开启会员，享积分与折扣":"Join membership for points and discounts",
+  "手机号验证即可开通，已是会员可直接登录":"Verify your phone to join, or log in if already a member",
+  "立即开启":"Join now", "用 LINE 绑定已有会员":"Link an existing member with LINE",
+  "张":"M", "张三":"Member", "绑定状态":"Link status", "门店通知":"Store notifications",
+  "可接收通知":"Can receive notifications", "解除 LINE 绑定":"Unlink LINE",
+  "P0 支持手机号 OTP 验证后自助解绑。":"P0 supports self-service unlinking after phone OTP verification.",
+  "绑定 LINE":"Link LINE", "即将打开 LINE":"Opening LINE",
+  "需要前往 LINE 官方页面完成身份授权":"Continue to the official LINE page to authorize your identity",
+  "官方授权":"Official authorization", "前往 LINE 授权":"Continue to LINE authorization", "取消":"Cancel",
+  "此处用于演示真实的跨应用跳转：当前仍在会员 H5，下一步会打开 LINE 官方授权页面。":"This demonstrates the real cross-app transition: you are still in Member H5 and the next step opens LINE authorization.",
+  "服务商":"Service provider", "国家 / 地区":"Country / Region",
+  "主要个人资料信息（必填）":"Primary profile information (required)", "你的内部标识符（必填）":"Your internal identifier (required)",
+  "允许":"Allow",
+  "Wongnai 实测会跳转至 LINE 官方 Verification 页面；允许后返回原会员流程。":"The tested Wongnai flow opens LINE's official Verification page and returns to the member flow after approval.",
+  "返回会员 H5":"Return to Member H5", "LINE 授权已完成":"LINE authorization complete",
+  "正在返回会员 H5，并恢复刚才的操作":"Returning to Member H5 and resuming your previous action",
+  "授权完成":"Authorized",
+  "回跳时校验 OAuth state，并恢复品牌、门店和原流程位置，不要求顾客重新开始。":"The redirect validates OAuth state and restores the brand, store and previous step without restarting the flow.",
+  "绑定成功":"Linked successfully", "已关联会员":"Linked member", "绑定来源":"Link source",
+  "关注门店 LINE 才能收到通知":"Follow the store's LINE account to receive notifications",
+  "关注后可接收订单、积分与权益提醒":"Follow to receive order, point and benefit notifications",
+  "添加门店好友":"Add store as friend", "LINE 好友添加成功":"LINE friend added",
+  "LINE 已关联当前会员，后续可使用 LINE 登录并接收会员通知。":"LINE is linked to this member. You can now log in with LINE and receive member notifications.",
+  "知道了":"Got it", "无法完成绑定":"Unable to link",
+  "该 LINE 账号已绑定其他会员":"This LINE account is linked to another member",
+  "请更换其他 LINE 账号进行绑定，原绑定关系不会被替换。":"Use another LINE account to link. The existing link will not be replaced.",
+  "更换其他 LINE 账号":"Use another LINE account", "返回会员中心":"Return to Member Center",
+  "请在 LINE App 中切换账号后重新进入绑定流程；页面不提供账号切换按钮，也不显示他人手机号、姓名或会员卡号。":"Switch accounts in the LINE App, then re-enter the linking flow. This page does not provide account switching or reveal another member's phone number, name or member number.",
+  "该手机号已绑定其他 LINE 账号":"This phone number is linked to another LINE account",
+  "请使用原 LINE 账号登录；如无法使用，请联系门店客服处理。":"Log in with the original LINE account. If it is unavailable, contact store support.",
+  "使用原 LINE 账号":"Use original LINE account", "手机号冲突错误页":"Phone conflict error",
+  "系统不会自动覆盖原绑定关系，也不会展示已绑定 LINE 账号的信息。":"The existing link will not be overwritten, and the linked LINE account information will not be shown.",
+  "请选择使用原 LINE 账号重新进入，或验证手机号后更换绑定。":"Use the original LINE account to re-enter, or verify your phone number to replace the link.",
+  "请先使用原 LINE 账号进入会员中心并解除绑定，再使用当前 LINE 重新绑定；如无法使用原账号，请联系门店客服。":"First use the original LINE account to enter Member Center and unlink it, then link the current LINE account. If the original account is unavailable, contact store support.",
+  "使用原 LINE 账号重新进入":"Re-enter with original LINE account", "验证手机号并更换绑定":"Verify phone and replace link",
+  "使用原 LINE 账号重新打开":"Reopen with the original LINE account",
+  "原 LINE 账号说明":"Original LINE account instructions", "换绑身份验证":"Verify before relinking",
+  "换绑确认":"Confirm relinking", "换绑成功":"Relinking successful", "解绑确认":"Confirm unlinking", "解绑成功":"Unlinking successful",
+  "当前页面无法直接切换 LINE 账号。请退出后，在原 LINE 账号中从 Rich Menu 或 Login with LINE 重新进入。":"This page cannot switch LINE accounts directly. Exit, then use the original LINE account to re-enter from Rich Menu or Login with LINE.",
+  "我知道了":"Got it", "验证会员身份":"Verify member identity", "已验证手机号":"Verified phone number",
+  "发送验证码":"Send code", "确认验证码":"Confirm code", "确认更换绑定":"Confirm link replacement",
+  "验证码已发送":"Verification code sent", "请先获取验证码":"Get a verification code first",
+  "更换绑定确认":"Confirm link replacement",
+  "旧账号 → 当前账号":"Old account → Current account",
+  "确认后，旧 LINE 将无法再登录该会员；当前 LINE 将立即绑定。":"After confirmation, the old LINE account can no longer log in to this member; the current LINE account will be linked immediately.",
+  "换绑将作为一次完整操作执行，不会留下未绑定的中间状态。":"The replacement is completed as one operation, with no unlinked intermediate state.",
+  "已完成换绑":"Link replaced successfully", "当前 LINE 已绑定该会员。":"The current LINE account is now linked to this member.",
+  "解绑身份验证":"Verify before unlinking", "确认解除绑定":"Confirm unlinking",
+  "为保障会员安全，请先验证会员手机号。":"Verify the member phone number to protect the account.",
+  "解除绑定确认":"Confirm LINE unlinking",
+  "解绑后将无法使用 LINE 登录，也无法通过该 LINE 接收会员通知。":"After unlinking, LINE login and member notifications through this LINE account will no longer be available.",
+  "解除绑定":"Unlink", "已解除 LINE 绑定":"LINE unlinked",
+  "会员资料、积分和订单不会被删除，后续可重新绑定 LINE。":"Member profile, points and orders are retained. LINE can be linked again later.",
+  "返回会员中心":"Return to Member Center",
+  "联系门店客服":"Contact store support", "改用手机号登录会员中心":"Log in to Member Center with phone",
+  "通用错误页承载全部分类，出路按钮固定最多两个；不显示他人手机号、姓名或会员卡号。":"A shared error page handles all categories with no more than two recovery actions. Other members' phone numbers, names and card numbers are never shown.",
+  "无法进入":"Unable to continue", "会员状态异常":"Abnormal member status",
+  "该会员账户当前不可用（已注销或停用）。":"This member account is unavailable (cancelled or deactivated).",
+  "改用其他手机号登录":"Log in with another phone number",
+  "P0 兜底：进入时实时校验会员状态，非正常即拒绝进入且不建登录态；批量失效处理属 P1。":"P0 fallback: validate member status on entry. Abnormal accounts are rejected without creating a session; bulk invalidation is P1.",
+  "暂时不可用":"Temporarily unavailable", "验证次数已达上限":"Verification limit reached",
+  "请稍后再试；期间不会发送新的验证码。":"Try again later. No new verification codes will be sent in the meantime.",
+  "我知道了":"Got it", "阈值沿用平台现有短信风控规范，本需求不新增参数。":"The existing SMS risk-control threshold is reused; this requirement adds no new setting.",
+  "暂不支持":"Not available", "该商户尚未完成 LINE 通道配置":"This merchant has not configured the LINE channel",
+  "你可以继续用手机号完成注册与登录。":"You can continue registration or login with your phone number.",
+  "用手机号继续":"Continue with phone",
+  "只在顾客从失效的 LINE 登录入口进入时出现；归为不可恢复类异常，不引导反复重试。通道配置为商户（租户）级，开通即全部门店生效。":"Shown only when a customer enters from an invalid LINE login entry. This is non-recoverable and does not prompt repeated retries. Channel configuration is tenant-level and applies to all stores.",
+  "请先阅读并同意服务条款与隐私政策":"Please read and agree to the Terms of Service and Privacy Policy",
+  "请先阅读并同意协议":"Please read and agree to the terms", "请输入 6 位验证码":"Enter the 6-digit verification code",
+  "已重新发送，Ref 更新为 W49a":"Code resent; Ref updated to W49a",
+  "会员首页补绑":"Linked from Member Home", "已跳过，稍后可在此重新添加":"Skipped. You can add the store later.",
+  "已切换分店为「Sukhumvit 店」":"Store switched to Sukhumvit",
+  "已生成工单，请联系门店客服":"Support request created. Contact store support.", "已生成工单":"Support request created"
+  ,"视觉与组件沿用我方现有规范：C 端按 Figma《V 2.16 个人中心》（375×812、页面底 #F0F2F4、卡片白底圆角、品牌橙主按钮、C 端按钮统一胶囊形状、状态图标带图例），后台按 GPOS_Web 规范（1、表格页 / pageheader / 表格_输入类 / 3、详情页，后台按钮保持规范方形，不与 C 端互套）。":"Visuals and components follow our existing standards. The customer-facing UI follows Figma ‘V2.16 Member Center’ (375×812, #F0F2F4 page background, rounded white cards, orange primary buttons, pill-shaped customer buttons and icon legends). Admin UI follows GPOS_Web conventions; admin buttons remain rectangular and do not reuse customer-facing styles.",
+  "视觉与组件沿用我方现有规范：C 端按 Figma《V 2.16 个人中心》（375×812、页面底 #F0F2F4、卡片白底圆角、品牌橙主按钮、":"Visuals and components follow our existing standards. The customer-facing UI follows Figma ‘V2.16 Member Center’ (375×812, #F0F2F4 page background, rounded white cards, orange primary buttons, ",
+  "C 端按钮统一胶囊形状":"pill-shaped customer buttons",
+  "、状态图标带图例），后台按 GPOS_Web 规范（1、表格页 / pageheader / 表格_输入类 / 3、详情页，后台按钮保持规范方形，不与 C 端互套）。":", with icon legends). Admin UI follows GPOS_Web conventions; admin buttons remain rectangular and do not reuse customer-facing styles.",
+  "渠道品牌色（LINE 绿）仅用于描边按钮与浅底卡片，不作大面积实心按钮；按钮文案均带动作对象。":"LINE green is used only for outlined buttons and light cards, not large solid buttons. Every button label names its action target.",
+  "顾客可先手机号入会后从会员首页 Add LINE，也可在登录页直接 Login with LINE。P0 支持顾客通过手机号 OTP 自助解绑；发生手机号绑定冲突时，可验证身份后完成换绑。":"Customers may join by phone and then Add LINE from Member Home, or use Login with LINE on the login page. P0 supports self-service unlinking by phone OTP and identity-verified relinking when a phone-link conflict occurs.",
+  "Customers（导航与页头以 GPOS 现有后台为准，此处为占位）":"Customers (navigation and header follow the current GPOS admin; placeholder)",
+  "门店 S1 · 数据权限范围内":"Store S1 · Within data access scope", "GPOS 现有导航（占位）":"Current GPOS navigation (placeholder)",
+  "已绑定未关注":"Linked, not following", "已绑定 LINE":"LINE linked", "已关注 OA":"Following OA",
+  "未绑定 / 未关注":"Not linked / not following", "图例与悬浮说明为本期必须":"Legend and hover help are required in this release",
+  "绑定状态：全部 ▾":"Link status: All ▾", "关注状态：全部 ▾":"Follow status: All ▾", "时间范围 ▾":"Date range ▾",
+  "导出未绑定名单":"Export unlinked list", "导出已绑定未关注":"Export linked non-followers",
+  "最近绑定":"Latest link", "操作":"Actions",
+  "最后一行为状态查询失败变体：图标置灰、可触达显示「—」，不默认成未绑定或未关注。操作列恒为「—」，后台无任何解绑 / 换绑 / 代绑入口。":"The last row shows a status-query failure: icons are grey and Reachable displays ‘—’, rather than defaulting to not linked or not following. Actions always display ‘—’; admin provides no unlink, relink or proxy-link action.",
+  "只读 · 无解绑 / 换绑入口":"Read-only · No unlink or relink action", "LINE 绑定状态":"LINE link status",
+  "OA 好友状态":"OA friend status", "绑定时间":"Linked at",
+  "本区块只读；P0 解绑与换绑仅通过顾客端身份验证流程操作，后台不提供按钮。":"This section is read-only. In P0, unlinking and relinking are available only through the customer identity-verification flow; admin provides no action.",
+  "← 返回 Customers":"← Back to Customers", "已导出未绑定名单（100 行）":"Unlinked list exported (100 rows)",
+  "已导出已绑定未关注名单":"Linked non-follower list exported"
+};
+const EN_PATTERNS = [
+  [/^请输入发送至 (.+) 的 6 位验证码$/, "Enter the 6-digit code sent to $1"],
+  [/^(.+)s$/, "$1s"]
+];
+function translateText(value){
+  if(UI.lang!=='en' || !value) return value;
+  if(EN[value]!==undefined) return EN[value];
+  for(const [re,to] of EN_PATTERNS){ if(re.test(value)) return value.replace(re,to); }
+  let out=value;
+  Object.keys(EN).sort((a,b)=>b.length-a.length).forEach(k=>{ if(out.includes(k)) out=out.split(k).join(EN[k]); });
+  return out;
+}
+function applyLanguage(root=document){
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+  const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(n=>{
+    if(n.parentElement && (['SCRIPT','STYLE'].includes(n.parentElement.tagName) || n.parentElement.closest('.demo-title'))) return;
+    if(n.__zh===undefined) n.__zh=n.nodeValue;
+    const m=n.__zh.match(/^(\s*)(.*?)(\s*)$/s); if(!m) return;
+    n.nodeValue=UI.lang==='en'?m[1]+translateText(m[2])+m[3]:n.__zh;
+  });
+  root.querySelectorAll?.('input[placeholder],input[aria-label]').forEach(el=>{
+    ['placeholder','aria-label'].forEach(a=>{ if(!el.hasAttribute(a)) return; const k='zh'+a; if(el.dataset[k]===undefined) el.dataset[k]=el.getAttribute(a); el.setAttribute(a,UI.lang==='en'?translateText(el.dataset[k]):el.dataset[k]); });
+  });
+  document.documentElement.lang=UI.lang==='en'?'en':'zh-CN';
+  document.querySelectorAll('.lang-switch button').forEach(b=>b.classList.toggle('on',b.dataset.lang===UI.lang));
+  updateDemoTitle();
+}
+function updateDemoTitle(){
+  const title=document.querySelector('.demo-title'); if(!title) return;
+  const main=title.querySelector('.demo-title-main');
+  if(!main) return;
+  if(UI.lang==='en'){
+    main.classList.add('en');
+    main.textContent='Member Login / Registration / LINE Link Demo';
+  }else{
+    main.classList.remove('en');
+    main.textContent='会员登录 / 注册 / LINE 绑定 Demo';
+  }
+}
+function setLang(lang){ UI.lang=lang==='en'?'en':'zh'; render(S.cur||'phone'); }
+const P = {
+  h5entry:'H5 登录/注册入口', phone:'手机号登录 / 注册', toline:'H5 跳转 LINE', linephone:'LINE 授权后输入手机号', otpconfirm:'OTP 验证', register:'注册资料',
+  member:'会员中心（我的）', channel:'账号与渠道', lineauth:'LINE 授权', redirect:'授权回跳',
+  result:'绑定结果', receipt:'好友添加回执', conflict:'冲突错误页', ephonebound:'手机号冲突错误页', originalhelp:'原 LINE 账号说明',
+  rebindverify:'换绑身份验证', rebindconfirm:'换绑确认', rebindsuccess:'换绑成功', unbindverify:'解绑身份验证', unbindconfirm:'解绑确认', unbindsuccess:'解绑成功', estatus:'状态异常页',
+  elimit:'风控上限页', echanel:'通道未配置页', liff:'LIFF 识别中', admin:'商家后台', adetail:'后台会员详情'
+};
+function track(k){ S.history.push(k); document.getElementById('path').innerHTML =
+  '演示路径：<b>' + S.history.map(h=>P[h]||h).join(' → ') + '</b>'; }
+function back(){ S.history.pop(); const p=S.history.pop(); if(p){ render(p); } else { render('phone'); } }
+function resetAll(){ if(S.timer) clearInterval(S.timer); Object.assign(S,{entry:'web',channel:true,loginWay:'',member:false,phone:null,bound:false,friend:false,status:'Active',opened:false,otpFails:0,limited:false,branch:'Jan cafe',sent:false,phErr:false,otpErr:false,agree:false,otp:'',cd:60,timer:null,known:false,history:[],lineAuthorized:false,phoneVerified:false,authIntent:'',forceConflict:false,name:'',birthday:'',gender:'',regErr:false}); render('phone'); }
+function scenario(k){
+  resetAll();
+  S.history=[];
+  if(k==='phone'){ S.known=true; render('phone'); return; }
+  if(k==='h5Entry'){ S.entry='web'; render('h5entry'); return; }
+  if(k==='phoneRegister'){ S.known=false; render('phone'); return; }
+  if(k==='lineLogin'){ S.entry='lineLogin'; S.authIntent='login'; S.known=false; render('toline'); return; }
+  if(k==='lineExisting'){ S.entry='lineLogin'; S.authIntent='login'; S.known=true; render('toline'); return; }
+  if(k==='memberBind'){ S.member=true; S.opened=true; S.phone='0995157826'; S.entry='member'; render('member'); return; }
+  if(k==='richMenu'){ S.entry='richMenu'; S.authIntent='login'; S.lineAuthorized=true; S.friend=true; render('liff'); return; }
+  if(k==='bound'){ S.member=true; S.bound=true; S.friend=true; S.entry='lineLogin'; S.authIntent='login'; render('toline'); return; }
+  if(k==='manageBinding'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.phone='0995157826'; S.entry='member'; render('channel'); return; }
+  if(k==='conflict'){ S.member=true; S.opened=true; S.phone='0995157826'; S.entry='member'; render('conflict'); return; }
+  if(k==='phoneConflict'){ S.member=true; S.opened=true; S.phone='0995157826'; S.entry='member'; render('ephonebound'); return; }
+  if(k==='frozen'){ S.member=true; S.bound=true; S.status='Cancelled'; S.entry='lineLogin'; S.authIntent='login'; render('toline'); return; }
+  if(k==='nochannel'){ S.channel=false; S.entry='lineLogin'; render('echanel'); return; }
+  if(k==='limit'){ S.limited=true; S.sent=true; S.agree=true; S.phone='0995157826'; S.otp='123456'; render('phone'); S.entry='web'; return; }
+}
+function go(v){ if(v==='phone'&&!S.entry){S.entry='web';} render(v); }
+function startH5Variant(existing){ S.entry='web'; S.known=!!existing; S.sent=false; S.otp=''; S.agree=false; go('phone'); }
+
+const tabs = (act)=>`<div class="tabs"><div><i>⌂</i>品牌页</div><div><i>◑</i>点单</div><div><i>▤</i>订单</div><div class="${act==='我的'?'act':''}"><i>●</i>我的</div></div>`;
+// 未开启会员画板只有三项：点单 / 订单 / 门店（对应 Figma「未开启会员」）
+const tabsNoMember = ()=>`<div class="tabs"><div><i>◑</i>点单</div><div><i>▤</i>订单</div><div class="act"><i>⌂</i>门店</div></div>`;
+const stat = (title,backTo)=>`<div class="stat"><span>${backTo?`<span class="back" onclick="go('${backTo}')">‹ 返回</span>`:''}${title||''}</span><span>9:41</span></div>`;
+const nav = (title,backTo)=>`<div class="nav">${backTo?`<span class="back" onclick="go('${backTo}')">‹ 返回</span>`:'<span></span>'}<span>${title}</span></div>`;
+const badge = (t,c)=>`<span class="badge ${c}">${t}</span>`;
+const esc = value=>String(value??'').replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+
+function memberCard(){
+  return `<div class="card" style="background:linear-gradient(105deg,#f6c08a,#ee9f5c);padding:12px;position:relative;overflow:hidden;margin-bottom:10px">
+    <div style="font-size:13px;font-weight:700;color:#4a2c10">黑金会员</div>
+    <div style="font-size:10.5px;color:#6b4a26;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">享受25%折扣 · 满 2,000 元可保级（超长单行截断）</div>
+    <div style="position:absolute;right:8px;top:6px;font-size:24px;opacity:.28">♛</div></div>`;
+}
+function nums(){ return `<div class="card" style="display:flex;padding:12px 0;margin-bottom:10px">
+  <div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:700">1,280</div><div style="font-size:10.5px;color:var(--text-4)">积分</div></div>
+  <div style="width:1px;background:var(--line)"></div>
+  <div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:700">¥ 36.50</div><div style="font-size:10.5px;color:var(--text-4)">储值余额</div></div></div>`;
+}
+function settingRows(){
+  const line = S.bound
+    ? `<div class="row hl" onclick="go('channel')"><span class="ic">◔</span>LINE 绑定 ${badge('已绑定','on')}<span class="v">${S.friend?'已关注':'未关注'} ›</span></div>`
+    : '';
+  return `<div class="card">
+    <div class="row"><span class="ic">⊕</span>切换语言<span class="v">简体中文 ›</span></div>
+    <div class="row"><span class="ic">⚇</span>就餐人数<span class="v">2</span></div>
+    <div class="row"><span class="ic">◑</span>就餐类型<span class="v">堂食 ›</span></div></div>
+    <div class="card">${line}
+    <div class="row"><span class="ic">▤</span>门店信息<span class="v">›</span></div>
+    <div class="row" onclick="toast('已切换分店为「Sukhumvit 店」')"><span class="ic">⇄</span>切换门店<span class="v">›</span></div></div>`;
+}
+function friendCard(){
+  if(S.member && !S.bound) return `<div class="card edgeG">
+    <div class="row" style="font-weight:600;color:#0b7d3a">Add LINE and enjoy special benefits!</div>
+    <div class="row blk">连接 LINE 后可用 LINE 登录，并接收会员权益通知</div>
+    <div style="padding:0 12px 12px"><div class="b line" onclick="startLineBinding()">Add LINE</div></div></div>`;
+  if(S.bound && !S.friend) return `<div class="card edgeG">
+    <div class="row" style="font-weight:600;color:#0b7d3a">添加店铺好友，领取多重权益</div>
+    <div class="row blk">关注后才能收到订单、积分与活动通知</div>
+    <div style="padding:0 12px 12px"><div class="b line" onclick="addFriend()">添加好友</div>
+    <div class="b ghost" onclick="toast('已跳过，稍后可在此重新添加')">以后再说</div></div></div>`;
+  return '';
+}
+function addFriend(){ S.friend=true; render('receipt'); }
+function startLineLogin(){ S.entry='lineLogin'; S.authIntent='login'; render('toline'); }
+function startLineBinding(){ S.entry='member'; S.authIntent='bind'; render('toline'); }
+
+const screens = {
+  h5entry(){
+    return {frame:'phone', html:`${stat('会员 H5')}<div class="body center">
+      <div class="t">从 H5 登录或注册</div>
+      <span class="p">请选择要演示的会员识别结果。真实流程由 CRM 根据手机号自动判断。</span>
+      <div style="margin-top:18px"><div class="b pri" onclick="startH5Variant(true)">已有会员：手机号登录</div>
+      <div class="b ghost" onclick="startH5Variant(false)">新用户：手机号注册</div></div>
+    </div>`};
+  },
+  phone(){
+    return {frame:'phone', html:`${nav(S.lineAuthorized?'确认会员手机号':'','')}<div class="body">
+      <div style="text-align:center;padding:22px 0 18px"><span class="logo"><img src="assets/gpos-logo.png" alt="GPOS"></span></div>
+      <div class="fild"><span class="cc" onclick="toast('区号选择：+66（泰国）/ +86 …')">+66 ⌄</span><span class="sep"></span><input id="ph" value="${S.phone||''}" inputmode="tel" oninput="sync()"></div>
+      ${S.phErr?'<div class="err">请输入有效的手机号码</div>':''}
+      <div class="fild"><span class="ic2">⛨</span><input id="otp" placeholder="请输入验证码" value="${S.otp||''}" inputmode="numeric" maxlength="6" oninput="sync()">${S.sent?`<span class="get dis">${S.cd}s</span>`:`<span class="get" onclick="getCode()">获取</span>`}</div>
+      ${S.otpErr?'<div class="err">验证码错误或已过期</div>':''}
+      <div class="agree" onclick="S.agree=!S.agree;render('phone')"><span class="cbx${S.agree?' on':''}">${S.agree?'✓':''}</span><span>我已阅读并同意<a>《隐私政策》</a>、<a>《用户服务协议》</a></span></div>
+      ${S.sent?`<div class="refline">Ref ${S.ref}</div>`:''}
+      <div class="b pri big${(!S.sent||S.otp.length!==6||!S.agree)?' off':''}" onclick="submitOtp()">登录/注册</div>
+      <div style="display:flex;align-items:center;gap:10px;margin:12px 4px;color:var(--ink3);font-size:11px"><span style="height:1px;background:var(--line);flex:1"></span>或<span style="height:1px;background:var(--line);flex:1"></span></div>
+      ${(S.channel && !S.lineAuthorized)?`<div class="b line" onclick="startLineLogin()">通过 LINE 登录</div>`:''}
+      <span class="note">${S.lineAuthorized?'LINE 授权已完成，请在同一页面完成手机号和验证码验证；本页不再重复展示 Login with LINE。':'手机号登录/注册沿用现有页面：手机号、验证码和协议同屏。'}</span>
+    </div>`};
+  },
+  linephone(){
+    return {frame:'phone', html:`${nav('确认手机号','')}<div class="body">
+      <div style="text-align:center;padding:22px 0 16px"><span class="logo"><img src="assets/gpos-logo.png" alt="GPOS"></span></div>
+      <div class="t" style="text-align:center">输入手机号</div>
+      <span class="p" style="text-align:center">用于识别已有会员或注册新会员</span>
+      <div class="inwrap"><input class="in" id="lineph" value="${S.phone||''}" inputmode="tel" placeholder="请输入手机号"></div>
+      <div class="inwrap"><div class="b pri" onclick="lookupLinePhone()">继续</div></div>
+      <span class="note">Wongnai 实测顺序：LINE 授权成功后，尚未绑定的用户先输入手机号；此处不再次展示 Login with LINE。</span>
+    </div>`};
+  },
+  otpconfirm(){
+    return {frame:'phone', html:`${nav('验证手机号','')}<div class="body">
+      <div style="text-align:center;padding:22px 0 16px"><span class="logo"><img src="assets/gpos-logo.png" alt="GPOS"></span></div>
+      <div class="t" style="text-align:center">确认手机号</div>
+      <span class="p" style="text-align:center">请输入发送至 ${S.phone||'0995157826'} 的 6 位验证码</span>
+      <div class="inwrap"><input class="in" id="lineotp" value="${S.otp||''}" inputmode="numeric" maxlength="6" placeholder="请输入验证码"></div>
+      <div class="refline">Ref ${S.ref}</div>
+      <div class="inwrap"><div class="b pri" onclick="completeLineOtp()">确认并继续</div></div>
+      <span class="note">${S.lineAuthorized?'Wongnai 实测：LINE 授权后，新会员先填写资料再 OTP；已有会员跳过资料页，直接 OTP。':'Wongnai 实测：手机号确认后进入独立 OTP 页面，验证成功后进入会员首页。'}</span>
+    </div>`};
+  },
+  register(){
+    return {frame:'phone', html:`${nav('注册会员','')}<div class="body">
+      <div class="inwrap"><label class="field-label">姓名<span class="required">*</span></label><input class="in" id="nm" value="${esc(S.name)}" placeholder="会员姓名" oninput="syncRegister()"></div>
+      <div class="inwrap"><label class="field-label">手机号<span class="required">*</span></label><input class="in ro" value="${(S.phone||'').slice(0,3)}****${(S.phone||'').slice(-3)}（已验证）" disabled></div>
+      <div class="inwrap"><label class="field-label">性别<span class="required">*</span></label><div class="chips" style="padding:0"><span class="chip${S.gender==='male'?' on':''}" data-value="male" onclick="pick(this)">男</span><span class="chip${S.gender==='female'?' on':''}" data-value="female" onclick="pick(this)">女</span><span class="chip${S.gender==='unspecified'?' on':''}" data-value="unspecified" onclick="pick(this)">不指定</span></div></div>
+      <div class="inwrap"><label class="field-label">出生日期（年 / 月 / 日）<span class="required">*</span></label><input class="in" id="bd" type="date" value="${S.birthday}" aria-label="出生日期（年、月、日）" onchange="syncRegister()"></div>
+      ${S.regErr?'<div class="err">请完整填写姓名、手机号、性别和出生日期</div>':''}
+      <div class="agree" onclick="S.agree=!S.agree;render('register')"><span class="cbx${S.agree?' on':''}">${S.agree?'✓':''}</span><span>我已阅读并同意<a>《服务条款》</a>与<a>《隐私政策》</a></span></div>
+      <div class="inwrap"><div class="b pri" onclick="finishRegister()">提交注册资料</div></div>
+      <span class="note">入会门店由注册二维码中的门店参数自动记录，顾客无需填写；通过 LINE 登录的新用户，资料填写完成后再进行 OTP。</span>
+      <div class="chips"><span class="chip" onclick="go('phone')">‹ 演示：回登录页</span></div>
+    </div>`};
+  },
+  liff(){
+    return {frame:'phone', html:`${stat('会员中心')}<div class="body center">
+      <div class="spin"></div><div class="t">从 LINE Rich Menu 打开会员中心</div>
+      <span class="p">系统先通过 LIFF 识别 LINE 身份，再判断绑定关系</span>
+      <div style="margin-top:18px"><div class="b pri" onclick="richMenuLinked()">已绑定会员：免登录进入</div>
+      <div class="b line" onclick="richMenuUnlinked(true)">已有会员：手机号验证并绑定</div>
+      <div class="b ghost" onclick="richMenuUnlinked(false)">新用户：手机号验证并注册</div></div>
+      <span class="note" style="display:block;margin-top:14px">Rich Menu 入口无需再次点击 Login with LINE；未绑定用户继续完成手机号验证。</span>
+    </div>${tabs('我的')}`};
+  },
+  member(){
+    if(!S.opened){
+      return {frame:'phone', html:`${stat('')}<div class="body" style="position:relative">
+        <div style="opacity:.25"><div class="t" style="text-align:center">店铺名称店铺农村店店铺<br><span style="font-size:11px;font-weight:400;color:var(--text-4)">(480)-132-123</span></div></div>
+        <div class="mask"><div class="guide"><h3>开启会员，享积分与折扣</h3><p>手机号验证即可开通，已是会员可直接登录</p>
+        <div class="b pri" onclick="S.opened=true;go('phone')">立即开启</div>
+        <div class="b line" onclick="S.opened=true;go('linauth')">用 LINE 绑定已有会员</div></div></div>
+      </div>${tabsNoMember()}`};
+    }
+    return {frame:'phone', html:`${stat('Jan cafe')}<div class="body">
+      <div class="row" style="padding:12px 4px"><div style="width:38px;height:38px;border-radius:50%;background:#c98a52;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px">张</div>
+      <div><div style="font-size:14px;font-weight:600">张三</div><div style="font-size:11px;color:var(--text-4)">+86 ${(S.phone||'18765789009').slice(0,3)}****${(S.phone||'18765789009').slice(-4,)}9009</div></div><span class="ar">›</span></div>
+      ${memberCard()}${nums()}${friendCard()}${settingRows()}
+    </div>${tabs('我的')}`};
+  },
+  channel(){
+    return {frame:'phone', html:`${nav('LINE 绑定','member')}<div class="body">
+      <div class="card">
+        <div class="row">绑定状态<span class="v">${S.bound?badge('已绑定','on'):badge('未绑定','na')}</span></div>
+        <div class="row">LINE OA 好友状态<span class="v">${S.friend?badge('已关注','on'):badge('未关注','na')}</span></div>
+        <div class="row">CRM 消息可触达<span class="v">${S.bound&&S.friend?badge('是','on'):badge('否','off')}</span></div>
+      </div>
+      ${S.bound
+        ? `<div class="b ghost" onclick="beginUnbind()">解除 LINE 绑定</div><span class="note">P0 支持手机号 OTP 验证后自助解绑。</span>`
+        : `<div class="b pri" onclick="go('linauth')">绑定 LINE</div>`}
+    </div>${tabs('我的')}`};
+  },
+  toline(){
+    return {frame:'phone', html:`${stat('会员 H5')}<div class="body center">
+      <div class="t">即将打开 LINE</div>
+      <span class="p">需要前往 LINE 官方页面完成身份授权</span>
+      <div class="jump"><div class="jumpapp"><i>H5</i><span>会员中心</span></div><div class="jumparrow">→</div><div class="jumpapp lineapp"><i>LINE</i><span>官方授权</span></div></div>
+      <div class="b line" onclick="go('linauth')">前往 LINE 授权</div>
+      <div class="b ghost" onclick="back()">取消</div>
+      <span class="note">此处用于演示真实的跨应用跳转：当前仍在会员 H5，下一步会打开 LINE 官方授权页面。</span>
+    </div>`};
+  },
+  linauth(){
+    return {frame:'phone', html:`${stat('LINE')}<div class="body">
+      <div class="t">Verification</div>
+      <div class="card"><div class="row">服务商<span class="v">Jan cafe ›</span></div><div class="row">国家 / 地区<span class="v">Thailand</span></div></div>
+      <div class="card"><div class="row" style="font-weight:600">Grant the following permissions to this service.</div>
+      <div class="row">主要个人资料信息（必填）<span class="v">›</span></div><div class="row">你的内部标识符（必填）<span class="v">›</span></div></div>
+      <div class="b pri" style="background:#06c755" onclick="afterAuth()">允许</div>
+      <div class="b ghost" onclick="back()">取消</div>
+      <span class="note">Wongnai 实测会跳转至 LINE 官方 Verification 页面；允许后返回原会员流程。</span>
+    </div>`};
+  },
+  redirect(){
+    return {frame:'phone', html:`${stat('返回会员 H5')}<div class="body center">
+      <div class="t">LINE 授权已完成</div>
+      <span class="p">正在返回会员 H5，并恢复刚才的操作</span>
+      <div class="jump"><div class="jumpapp lineapp"><i>LINE</i><span>授权完成</span></div><div class="jumparrow">→</div><div class="jumpapp"><i>H5</i><span>会员中心</span></div></div>
+      <div class="b pri" onclick="completeReturn()">返回会员 H5</div>
+      <span class="note">回跳时校验 OAuth state，并恢复品牌、门店和原流程位置，不要求顾客重新开始。</span>
+    </div>`};
+  },
+  result(){
+    return {frame:'phone', html:`${nav('绑定结果','member')}<div class="body">
+      <div class="card" style="border:1px solid #8cc5a0"><div class="row" style="color:var(--success-5);font-weight:600">绑定成功</div>
+      <div class="row">已关联会员<span class="v">${(S.phone||'0995157826').slice(0,3)}****${(S.phone||'0995157826').slice(-4)}</span></div>
+      <div class="row">绑定来源<span class="v">${S.entry==='lineLogin'?'Login with LINE':'会员首页 Add LINE'}</span></div></div>
+      ${!S.friend?`<div class="card edge"><div class="row" style="font-weight:600">关注门店 LINE 才能收到通知</div>
+      <div class="row blk">关注后可接收订单、积分与权益提醒</div>
+      <div style="padding:0 12px 12px"><div class="b line" onclick="addFriend()">添加门店好友</div>
+      <div class="b ghost" onclick="go('member')">以后再说</div></div></div>`:''}
+    </div>${tabs('我的')}`};
+  },
+  receipt(){
+    return {frame:'phone', html:`${stat('Jan cafe')}<div class="body" style="position:relative">
+      <div style="opacity:.45">${memberCard()}${nums()}${settingRows()}</div>
+      <div class="mask"><div class="guide"><div style="font-size:38px;color:var(--success-5);margin-bottom:6px">✓</div><h3>LINE 好友添加成功</h3><p>LINE 已关联当前会员，后续可使用 LINE 登录并接收会员通知。</p><div class="b pri" onclick="go('member')">知道了</div></div></div>
+    </div>${tabs('我的')}`};
+  },
+  conflict(){
+    return {frame:'phone', html:`${stat('无法完成绑定')}<div class="body">
+      <div class="t" style="color:var(--danger-5)">该 LINE 账号已绑定其他会员</div>
+      <span class="p">请更换其他 LINE 账号进行绑定，原绑定关系不会被替换。</span>
+      <span class="note">请在 LINE App 中切换账号后重新进入绑定流程；页面不提供账号切换按钮，也不显示他人手机号、姓名或会员卡号。</span>
+      <div style="margin-top:20px"><div class="b pri" onclick="returnFromConflict()">返回</div></div>
+    </div>`};
+  },
+  ephonebound(){
+    return {frame:'phone', html:`${stat('无法完成绑定')}<div class="body">
+      <div class="t" style="color:var(--danger-5)">该手机号已绑定其他 LINE 账号</div>
+      <span class="p">请先使用原 LINE 账号进入会员中心并解除绑定，再使用当前 LINE 重新绑定；如无法使用原账号，请联系门店客服。</span>
+      <span class="note">系统不会自动覆盖原绑定关系，也不会展示已绑定 LINE 账号的信息。</span>
+      <div style="margin-top:20px"><div class="b pri" onclick="returnFromConflict()">返回</div></div>
+    </div>`};
+  },
+  originalhelp(){
+    return {frame:'phone', html:`${stat('使用原 LINE 账号重新打开')}<div class="body">
+      <div class="t">使用原 LINE 账号重新打开</div>
+      <span class="p">当前页面无法直接切换 LINE 账号。请退出后，在原 LINE 账号中从 Rich Menu 或 Login with LINE 重新进入。</span>
+      <div class="b pri" onclick="go('member')">我知道了</div>
+    </div>`};
+  },
+  rebindverify(){
+    return {frame:'phone', html:`${nav('验证会员身份','ephonebound')}<div class="body">
+      <div class="t">验证会员身份</div>
+      <span class="p">为保障会员安全，请先验证会员手机号。</span>
+      <div class="inwrap"><label class="field-label">已验证手机号</label><input class="in ro" value="${maskPhone()}" disabled></div>
+      <div class="fild"><span class="ic2">⛨</span><input id="securityOtp" placeholder="请输入验证码" inputmode="numeric" maxlength="6">${S.sent?`<span class="get dis security-countdown">${S.cd}s</span>`:`<span class="get" onclick="sendSecurityCode('rebindverify')">发送验证码</span>`}</div>
+      <div class="b pri" onclick="verifySecurityCode('rebindconfirm')">确认验证码</div>
+    </div>`};
+  },
+  rebindconfirm(){
+    return {frame:'phone', html:`${nav('更换绑定确认','rebindverify')}<div class="body">
+      <div class="t">确认更换绑定</div>
+      <span class="p">确认后，旧 LINE 将无法再登录该会员；当前 LINE 将立即绑定。</span>
+      <div class="card"><div class="row">手机号<span class="v">${maskPhone()}</span></div><div class="row">LINE 绑定<span class="v">旧账号 → 当前账号</span></div></div>
+      <div class="b pri" onclick="completeRebind()">确认更换绑定</div>
+      <div class="b ghost" onclick="go('ephonebound')">取消</div>
+      <span class="note">换绑将作为一次完整操作执行，不会留下未绑定的中间状态。</span>
+    </div>`};
+  },
+  rebindsuccess(){
+    return {frame:'phone', html:`${stat('已完成换绑')}<div class="body center">
+      <div style="font-size:38px;color:var(--success-5);margin-bottom:6px">✓</div>
+      <div class="t">已完成换绑</div>
+      <span class="p">当前 LINE 已绑定该会员。</span>
+      <div class="b pri" onclick="go('member')">返回会员中心</div>
+    </div>`};
+  },
+  unbindverify(){
+    return {frame:'phone', html:`${nav('解绑身份验证','channel')}<div class="body">
+      <div class="t">验证会员身份</div>
+      <span class="p">为保障会员安全，请先验证会员手机号。</span>
+      <div class="inwrap"><label class="field-label">已验证手机号</label><input class="in ro" value="${maskPhone()}" disabled></div>
+      <div class="fild"><span class="ic2">⛨</span><input id="securityOtp" placeholder="请输入验证码" inputmode="numeric" maxlength="6">${S.sent?`<span class="get dis security-countdown">${S.cd}s</span>`:`<span class="get" onclick="sendSecurityCode('unbindverify')">发送验证码</span>`}</div>
+      <div class="b pri" onclick="verifySecurityCode('unbindconfirm')">确认验证码</div>
+    </div>`};
+  },
+  unbindconfirm(){
+    return {frame:'phone', html:`${nav('解除绑定确认','unbindverify')}<div class="body">
+      <div class="t" style="color:var(--danger-5)">确认解除绑定</div>
+      <span class="p">解绑后将无法使用 LINE 登录，也无法通过该 LINE 接收会员通知。</span>
+      <div class="b pri" onclick="completeUnbind()">解除绑定</div>
+      <div class="b ghost" onclick="go('channel')">取消</div>
+    </div>`};
+  },
+  unbindsuccess(){
+    return {frame:'phone', html:`${stat('已解除 LINE 绑定')}<div class="body center">
+      <div style="font-size:38px;color:var(--success-5);margin-bottom:6px">✓</div>
+      <div class="t">已解除 LINE 绑定</div>
+      <span class="p">会员资料、积分和订单不会被删除，后续可重新绑定 LINE。</span>
+      <div class="b pri" onclick="go('member')">返回会员中心</div>
+    </div>`};
+  },
+  estatus(){
+    return {frame:'phone', html:`${stat('无法进入')}<div class="body">
+      <div class="t" style="color:var(--danger-5)">会员状态异常</div>
+      <span class="p">该会员账户当前不可用（已注销或停用）。</span>
+      <div class="b pri" onclick="toast('已生成工单')">联系门店客服</div>
+      <div class="b ghost" onclick="go('phone')">改用其他手机号登录</div>
+      <span class="note">P0 兜底：进入时实时校验会员状态，非正常即拒绝进入且不建登录态；批量失效处理属 P1。</span>
+    </div>`};
+  },
+  elimit(){
+    return {frame:'phone', html:`${stat('暂时不可用')}<div class="body">
+      <div class="t" style="color:var(--warning-5)">验证次数已达上限</div>
+      <span class="p">请稍后再试；期间不会发送新的验证码。</span>
+      <div class="b pri" onclick="go('phone')">我知道了</div>
+      <span class="note">阈值沿用平台现有短信风控规范，本需求不新增参数。</span>
+    </div>`};
+  },
+  echanel(){
+    return {frame:'phone', html:`${stat('暂不支持')}<div class="body">
+      <div class="t">该商户尚未完成 LINE 通道配置</div>
+      <span class="p">你可以继续用手机号完成注册与登录。</span>
+      <div class="b pri" onclick="go('phone')">用手机号继续</div>
+      <span class="note">只在顾客从失效的 LINE 登录入口进入时出现；归为不可恢复类异常，不引导反复重试。通道配置为商户（租户）级，开通即全部门店生效。</span>
+    </div>`};
+  },
+  admin(){
+    const rows = [
+      ['M','(66) 995157826',1,1,'是','11-07'],
+      ['I','(66) 925456340',1,0,'否','11-02'],
+      ['WEIWEI','(66) 925456349',0,1,'否','—'],
+      ['张三','(66) 988000042',0,0,'否','—'],
+      ['李四','(66) 988000311',-1,-1,'—','—'],
+    ];
+    const dot = v => v===-1?'<span class="dot n"></span><span class="dot n"></span>'
+      : `<span class="dot ${v?'g':'n'}"></span>`;
+    const fr = v => v===-1?'<span class="dot n"></span>' : `<span class="dot ${v?'o':'n'}"></span>`;
+    return {frame:'pc', html:`<div class="hd"><span>Customers（导航与页头以 GPOS 现有后台为准，此处为占位）</span><span>门店 S1 · 数据权限范围内</span></div>
+    <div class="pcwrap"><div class="side"><div class="grp">GPOS 现有导航（占位）</div><div>Dashboard</div><div class="on">Customers</div><div>Membership Tier</div><div>Promotion</div><div>Feedback</div><div>Customer Group</div><div>Broadcast</div><div>Report</div><div class="grp">Setting</div><div>Direct LINE OA</div></div>
+    <div class="main">
+      <div class="pgt">Customers</div>
+      <div class="legend" style="margin-bottom:8px">All members 5 of 1,204 ｜ 已绑定 738 ｜ 可触达 512 ｜ 已绑定未关注 226</div>
+      <div class="legend"><span>${dot(1)}已绑定 LINE</span><span>${fr(1)}已关注 OA</span><span><span class="dot n"></span>未绑定 / 未关注</span><span style="margin-left:auto;color:var(--danger-5)">图例与悬浮说明为本期必须</span></div>
+      <div class="chips" style="padding:0 0 9px"><span class="chip on">All Branches ×</span><span class="chip on">绑定状态：全部 ▾</span><span class="chip on">关注状态：全部 ▾</span><span class="chip">时间范围 ▾</span><span class="chip" onclick="toast('已导出未绑定名单（100 行）')">导出未绑定名单</span><span class="chip" onclick="toast('已导出已绑定未关注名单')">导出已绑定未关注</span></div>
+      <table><thead><tr><th>Member</th><th>Phone Number</th><th>Email</th><th>Birthday</th><th>Spending</th><th>Balance Point</th><th>可触达</th><th>最近绑定</th><th>操作</th></tr></thead><tbody>
+      ${rows.map(r=>`<tr class="clk" onclick="go('adetail')"><td>${r[0]} ${dot(r[2])}${fr(r[3])}</td><td>${r[1]}</td><td>—</td><td>—</td><td>0 THB</td><td>0</td><td>${r[4]}</td><td>${r[5]}</td><td>—</td></tr>`).join('')}
+      </tbody></table>
+      <div class="note" style="padding-top:8px">最后一行为状态查询失败变体：图标置灰、可触达显示「—」，不默认成未绑定或未关注。操作列恒为「—」，后台无任何解绑 / 换绑 / 代绑入口。</div>
+    </div></div>`};
+  },
+  adetail(){
+    return {frame:'pc', html:`<div class="hd"><span>M <span class="dot g"></span><span class="dot o"></span></span><span>只读 · 无解绑 / 换绑入口</span></div>
+    <div class="main" style="padding:14px">
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <div class="card" style="flex:1;min-width:240px;padding:12px">
+          <div class="kv"><span>Since</span><span>05/11/2026</span></div>
+          <div class="kv"><span>Last Visit</span><span>—</span></div>
+          <div class="kv"><span>Status</span><span>Active</span></div>
+          <div style="display:flex;gap:14px;font-size:11.5px;color:var(--primary-6);font-weight:600;margin-top:8px"><span>✎ Edit info</span><span>⚙ Adjust point</span></div>
+        </div>
+        <div class="card edge" style="flex:1;min-width:240px;padding:12px">
+          <div class="kv"><span>LINE 绑定状态</span><span><span class="dot g"></span>已绑定</span></div>
+          <div class="kv"><span>OA 好友状态</span><span><span class="dot o"></span>已关注</span></div>
+          <div class="kv"><span>可触达</span><span>是</span></div>
+          <div class="kv"><span>绑定来源</span><span>Login with LINE</span></div>
+          <div class="kv"><span>绑定时间</span><span>2026-11-07 14:32</span></div>
+          <div class="note" style="padding-top:6px">本区块只读；P0 解绑与换绑仅通过顾客端身份验证流程操作，后台不提供按钮。</div>
+        </div>
+      </div>
+      <div class="note" style="margin-top:12px">Point History ｜ Date Time · Detail · Receipt · Items · Sub total · Discount ｜ All 0 records</div>
+      <div style="margin-top:10px"><span class="chip" onclick="go('admin')">← 返回 Customers</span></div>
+    </div>`};
+  }
+};
+
+
+function finishRegister(){
+  syncRegister();
+  if(!S.name.trim() || !S.phone || !S.gender || !S.birthday){ S.regErr=true; render('register'); return; }
+  if(!S.agree){ toast('请先阅读并同意服务条款与隐私政策'); return; }
+  S.regErr=false;
+  S.member=true; S.opened=true;
+  if(S.lineAuthorized){ S.bound=true; S.friend=true; go('receipt'); }
+  else { go('member'); }
+}
+function lookupPhoneFirst(){
+  const el=document.getElementById('ph');
+  const v=(el?el.value:S.phone||'').replace(/\D/g,'');
+  if(v.length<8){ S.phErr=true; S.phone=v; render('phone'); return; }
+  S.phErr=false; S.phone=v; S.sent=true;
+  if(S.known){ go('otpconfirm'); } else { go('register'); }
+}
+function lookupLinePhone(){
+  const el=document.getElementById('lineph');
+  const v=(el?el.value:S.phone||'').replace(/\D/g,'');
+  if(v.length<8){ toast('请输入有效的手机号码'); return; }
+  S.phone=v;
+  if(S.known){ go('otpconfirm'); } else { go('register'); }
+}
+function completeLineOtp(){
+  const el=document.getElementById('lineotp');
+  const v=(el?el.value:S.otp||'').replace(/\D/g,'');
+  if(v.length!==6){ toast('请输入 6 位验证码'); return; }
+  S.otp=v; S.member=true; S.opened=true;
+  if(S.lineAuthorized){ S.bound=true; S.friend=true; go('receipt'); }
+  else { go('member'); }
+}
+function resend(){ S.ref='W49a'; toast('已重新发送，Ref 更新为 W49a'); }
+function getCode(){
+  const el=document.getElementById('ph'); const v=(el?el.value:'').replace(/\D/g,'');
+  if(v.length<8){ S.phErr=true; S.phone=v; render('phone'); return; }
+  S.phErr=false; S.phone=v; S.sent=true; S.cd=60; S.otp=''; S.otpFails=0; render('phone');
+  if(S.timer) clearInterval(S.timer);
+  S.timer=setInterval(()=>{
+    if(S.cd>0){
+      S.cd--;
+      if(S.cur==='phone'){
+        const countdown=document.querySelector('.get.dis');
+        if(countdown) countdown.textContent=`${S.cd}s`;
+      }
+    } else { clearInterval(S.timer); }
+  },1000);
+}
+// 输入即时同步：不整屏重绘（避免丢焦点），只更新状态与主按钮可用性
+function sync(){
+  const p=document.getElementById('ph'), o=document.getElementById('otp'), b=document.querySelector('.b.big');
+  if(p) S.phone=p.value.replace(/\D/g,'');
+  if(o) S.otp=o.value.replace(/\D/g,'');
+  if(!b) return;
+  const ok = S.sent && (o ? o.value.replace(/\D/g,'').length===6 : false) && S.agree;
+  b.classList.toggle('off', !ok);
+}
+function submitOtp(){  if(!S.sent){ S.phErr=true; render('phone'); return; }
+  if(!S.agree){ toast('请先阅读并同意协议'); return; }
+  if(S.limited){ render('elimit'); return; }
+  const el=document.getElementById('otp'); const v=(el?el.value:S.otp||'').replace(/\D/g,'');
+  if(v.length!==6){ S.otpFails++; S.otpErr=true; if(S.otpFails>=3){ S.limited=true; render('elimit'); return; } render('phone'); return; }
+  S.member=true; S.opened=true; S.otpErr=false; S.otp=v;
+  S.phoneVerified=true;
+  if(S.known){
+    if(S.lineAuthorized){ S.bound=true; S.friend=true; go('receipt'); }
+    else { go('member'); }
+  } else { go('register'); }
+}
+function syncRegister(){
+  const name=document.getElementById('nm'), birthday=document.getElementById('bd');
+  if(name) S.name=name.value;
+  if(birthday) S.birthday=birthday.value;
+}
+function pick(el){
+  syncRegister();
+  [...el.parentNode.children].forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  S.gender=el.dataset.value||'';
+}
+function afterIdentify(){
+  if(S.status!=='Active'){ render('estatus'); return; }
+  if(S.bound){ go('member'); return; }
+  if(S.member){ S.bound=true; S.friend=true; S.loginWay='会员首页补绑'; go('receipt'); return; }
+  go('phone');
+}
+function richMenuLinked(){
+  S.member=true; S.opened=true; S.bound=true; S.friend=true; S.known=true; go('member');
+}
+function richMenuUnlinked(existing){
+  S.member=false; S.opened=false; S.bound=false; S.friend=true; S.known=!!existing; S.lineAuthorized=true; go('phone');
+}
+function afterAuth(){
+  S.lineAuthorized=true;
+  go('redirect');
+}
+function maskPhone(){
+  const phone=String(S.phone||'0995157826');
+  return phone.length>6 ? `${phone.slice(0,3)}****${phone.slice(-3)}` : phone;
+}
+function resetSecurityOtp(){
+  if(S.timer) clearInterval(S.timer);
+  S.sent=false; S.otp=''; S.cd=60; S.timer=null;
+}
+function beginRebind(){ resetSecurityOtp(); go('rebindverify'); }
+function beginUnbind(){ resetSecurityOtp(); go('unbindverify'); }
+function sendSecurityCode(screen){
+  S.sent=true; S.otp=''; S.cd=60; render(screen); toast('验证码已发送');
+  if(S.timer) clearInterval(S.timer);
+  S.timer=setInterval(()=>{
+    if(S.cd>0){
+      S.cd--;
+      if(S.cur===screen){ const countdown=document.querySelector('.security-countdown'); if(countdown) countdown.textContent=`${S.cd}s`; }
+    } else { clearInterval(S.timer); S.timer=null; }
+  },1000);
+}
+function verifySecurityCode(next){
+  if(!S.sent){ toast('请先获取验证码'); return; }
+  const input=document.getElementById('securityOtp');
+  const code=(input?input.value:'').replace(/\D/g,'');
+  if(code.length!==6){ toast('请输入 6 位验证码'); return; }
+  S.otp=code; go(next);
+}
+function completeRebind(){
+  S.bound=true; S.lineAuthorized=true; S.forceConflict=false; S.friend=false; go('rebindsuccess');
+}
+function completeUnbind(){
+  S.bound=false; S.lineAuthorized=false; go('unbindsuccess');
+}
+function completeReturn(){
+  if(!S.channel){ go('echanel'); return; }
+  if(S.forceConflict){ go('conflict'); return; }
+  if(S.status!=='Active'){ go('estatus'); return; }
+  if(S.bound){ go('member'); return; }
+  if(S.member){ S.bound=true; S.friend=true; S.loginWay='会员首页补绑'; go('receipt'); return; }
+  go('phone');
+}
+function toast(msg){
+  const p=document.querySelector('.phone'); if(!p) return;
+  const t=document.createElement('div'); t.className='toast'; t.textContent=translateText(msg); p.appendChild(t);
+  setTimeout(()=>t.remove(),1800);
+}
+function returnFromConflict(){
+  if(FOCUS_MODE && history.length>1){ history.back(); return; }
+  go(SIMPLE_MODE?'h5entry':'member');
+}
+function render(v){
+  S.cur=v;
+  const sc=screens[v]();
+  const stage=document.getElementById('stage');
+  if(sc.frame==='pc'){ stage.innerHTML=`<div class="pc">${sc.html}</div>`; }
+  else { stage.innerHTML=`<div class="phone${v==='phone'?' white':''}">${sc.html}</div>`; }
+  document.getElementById('state').innerHTML=[
+    ['当前环境', v==='linauth'?'<span class="dot g"></span>LINE 官方页面':(v==='toline'?'会员 H5 → LINE':(v==='redirect'?'LINE → 会员 H5':(v==='liff'?'LINE 内 LIFF':'会员 H5')))],
+    ['入口', S.entry==='lineLogin'?'Login with LINE':(S.entry==='member'?'会员首页 Add LINE':(S.entry==='richMenu'?'LINE Rich Menu':(S.entry==='web'?'手机号登录页':'—')))],
+    ['通道配置', S.channel?'已配置':'未配置'],
+    ['会员', S.member?'已登录 / 已注册':'未登录'],
+    ['LINE 绑定', S.bound?'<span class="dot g"></span>已绑定':'<span class="dot n"></span>未绑定'],
+    ['LINE OA 好友状态', S.friend?'<span class="dot o"></span>已关注':'<span class="dot n"></span>未关注'],
+    ['CRM 消息可触达', (S.bound&&S.friend)?'是':'否'],
+    ['会员状态', S.status],
+  ].map(r=>`<div class="st"><span>${r[0]}</span><span>${r[1]}</span></div>`).join('');
+  document.querySelectorAll('.panel .btn').forEach(b=>b.classList.remove('on'));
+  if(!S.history.length || S.history[S.history.length-1]!==v) S.history.push(v);
+  document.getElementById('path').innerHTML='演示路径：<b>'+S.history.map(h=>P[h]||h).join(' → ')+'</b>';
+  applyLanguage(document);
+}
+const PAGE_PARAMS=new URLSearchParams(location.search);
+const SIMPLE_MODE=PAGE_PARAMS.get('simple')==='1';
+const FOCUS_MODE=PAGE_PARAMS.get('focus')==='1';
+const INITIAL_SCREEN=PAGE_PARAMS.get('screen');
+if(SIMPLE_MODE){
+  document.body.classList.add('simple-mode');
+  document.querySelector('.panel h1').outerHTML='<h1 class="demo-title"><span class="demo-title-kicker">H5 &amp; LINE</span><span class="demo-title-main">会员登录 / 注册 / LINE 绑定 Demo</span></h1>';
+}
+if(FOCUS_MODE) document.body.classList.add('focus-mode');
+S.entry='web'; S.known=true; render(INITIAL_SCREEN&&screens[INITIAL_SCREEN]?INITIAL_SCREEN:(SIMPLE_MODE?'h5entry':'phone'));
+</script>
+</body>
+</html>
+
