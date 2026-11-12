@@ -279,7 +279,7 @@ function bindEvents() {
 async function init() {
   bindEvents();
   try {
-    const response = await fetch("content/manifest.json");
+    const response = await fetch("manifest.json");
     if (!response.ok) throw new Error("manifest-not-found");
     const data = await response.json();
     state.config = data.site;
@@ -290,7 +290,7 @@ async function init() {
     route();
   } catch {
     state.config = { title: "我的个人文档" };
-    renderError("网站内容尚未就绪", "请确认 content/manifest.json 文件存在且格式正确。");
+    renderError("网站内容尚未就绪", "请确认 manifest.json 文件存在且格式正确。");
   }
 }
 

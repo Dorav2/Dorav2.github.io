@@ -1,0 +1,36 @@
+{
+  "site": {
+    "title": "我的个人文档",
+    "tagline": "记录想法，也记录成长",
+    "description": "这里收集我的个人介绍、学习笔记与项目记录。内容不追求数量，只留下值得回看的部分。"
+  },
+  "documents": [
+    {
+      "slug": "about",
+      "title": "关于我",
+      "category": "个人介绍",
+      "summary": "我的经历、兴趣，以及建立这个文档站的原因。",
+      "file": "about.md",
+      "updated": "2026-11-13",
+      "published": true
+    },
+    {
+      "slug": "first-note",
+      "title": "如何整理一篇学习笔记",
+      "category": "学习笔记",
+      "summary": "从问题出发，把输入变成真正可以重访的知识。",
+      "file": "first-note.md",
+      "updated": "2026-11-13",
+      "published": true
+    },
+    {
+      "slug": "first-project",
+      "title": "我的第一个项目记录",
+      "category": "项目记录",
+      "summary": "用目标、过程和复盘三个部分记录一次完整实践。",
+      "file": "first-project.md",
+      "updated": "2026-11-13",
+      "published": true
+    }
+  ]
+}
