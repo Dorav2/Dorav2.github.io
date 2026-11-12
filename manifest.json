@@ -31,6 +31,24 @@
       "file": "first-project.md",
       "updated": "2026-11-13",
       "published": true
+    },
+    {
+      "slug": "crm-web-portal",
+      "title": "CRM Web Portal",
+      "category": "CRM 演示",
+      "summary": "查看 CRM Web 门户与功能入口演示。",
+      "url": "CRM-Web-Portal.html",
+      "updated": "2026-11-13",
+      "published": true
+    },
+    {
+      "slug": "line-crm-member-login",
+      "title": "LINE CRM Member Login",
+      "category": "CRM 演示",
+      "summary": "查看会员登录、注册与 LINE 绑定流程演示。",
+      "url": "LINE-CRM-Member-Login.html",
+      "updated": "2026-11-13",
+      "published": true
     }
   ]
 }

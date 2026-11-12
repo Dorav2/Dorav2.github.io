@@ -127,6 +127,10 @@ function closeMobileNav() {
   document.querySelector("#menu-button").setAttribute("aria-expanded", "false");
 }
 
+function docHref(doc) {
+  return doc.url || `#doc=${encodeURIComponent(doc.slug)}`;
+}
+
 function renderNav() {
   const grouped = Map.groupBy
     ? Map.groupBy(state.documents, (doc) => doc.category)
@@ -134,7 +138,7 @@ function renderNav() {
   let html = '<a class="nav-home" href="#home"><span aria-hidden="true">⌂</span>首页</a>';
   for (const [category, docs] of grouped) {
     html += `<section class="nav-section"><h2 class="nav-section-title">${escapeHtml(category)}</h2>`;
-    html += docs.map((doc) => `<a class="nav-link" data-slug="${escapeHtml(doc.slug)}" href="#doc=${encodeURIComponent(doc.slug)}">${escapeHtml(doc.title)}</a>`).join("");
+    html += docs.map((doc) => `<a class="nav-link" data-slug="${escapeHtml(doc.slug)}" href="${escapeHtml(docHref(doc))}">${escapeHtml(doc.title)}</a>`).join("");
     html += "</section>";
   }
   nav.innerHTML = html;
@@ -142,7 +146,7 @@ function renderNav() {
 }
 
 function docCard(doc) {
-  return `<a class="doc-card" href="#doc=${encodeURIComponent(doc.slug)}">
+  return `<a class="doc-card" href="${escapeHtml(docHref(doc))}">
     <span class="category">${escapeHtml(doc.category)}</span>
     <span class="arrow" aria-hidden="true">↗</span>
     <h3>${escapeHtml(doc.title)}</h3>
@@ -175,6 +179,7 @@ function renderHome() {
 }
 
 async function getDocumentText(doc) {
+  if (doc.url) return "";
   if (state.documentText.has(doc.slug)) return state.documentText.get(doc.slug);
   const response = await fetch(doc.file);
   if (!response.ok) throw new Error("document-not-found");
@@ -186,6 +191,10 @@ async function getDocumentText(doc) {
 async function renderDocument(slug) {
   const doc = state.documents.find((item) => item.slug === slug);
   if (!doc) return renderError("没有找到这篇文档", "它可能已更名、移动或尚未发布。");
+  if (doc.url) {
+    location.href = doc.url;
+    return;
+  }
   setActiveNav(slug);
   content.innerHTML = '<div class="loading-state"><span class="spinner" aria-hidden="true"></span>正在读取文档…</div>';
   try {
@@ -250,7 +259,7 @@ async function search(query) {
   }));
   const matches = candidates.filter((item) => item.score > 0).sort((a, b) => b.score - a.score);
   searchResults.innerHTML = matches.length
-    ? matches.map(({ doc }) => `<a class="search-result" href="#doc=${encodeURIComponent(doc.slug)}"><strong>${highlight(doc.title, term)}</strong><span>${highlight(doc.summary, term)}</span></a>`).join("")
+    ? matches.map(({ doc }) => `<a class="search-result" href="${escapeHtml(docHref(doc))}"><strong>${highlight(doc.title, term)}</strong><span>${highlight(doc.summary, term)}</span></a>`).join("")
     : `<div class="empty-state"><strong>未找到相关文档</strong><span>换一个关键词试试。</span></div>`;
   searchResults.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => searchDialog.close()));
 }
