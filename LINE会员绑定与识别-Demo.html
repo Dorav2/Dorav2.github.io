@@ -281,7 +281,7 @@ const S = {
   entry: '', channel: true, loginWay: '', member: false, phone: null,
   bound: false, friend: false, friendKnown: true, status: 'Active', opened: false,
   otpFails: 0, limited: false, ref: 'W48i', branch: 'Jan cafe', known: false, sent: false, phErr: false, otpErr: false, agree: false, otp: '', cd: 60, timer: null, history: [], lineAuthorized:false, phoneVerified:false, authIntent:'', forceConflict:false,
-  name:'', birthday:'', gender:'', regErr:false, marketing:false
+  name:'', birthday:'', gender:'', regErr:false, marketing:false, svcNotify:true, mktNotify:false
 };
 const UI = { lang:'zh' };
 const EN = {
@@ -476,6 +476,7 @@ const EN = {
   "用手机号继续":"Continue with phone",
   "只在顾客从失效的 LINE 登录入口进入时出现；归为不可恢复类异常，不引导反复重试。通道配置为商户（租户）级，开通即全部门店生效。":"Shown only when a customer enters from an invalid LINE login entry. This is non-recoverable and does not prompt repeated retries. Channel configuration is tenant-level and applies to all stores.",
   "请先阅读并同意服务条款与隐私政策":"Please read and agree to the Terms of Service and Privacy Policy",
+  "请先同意服务条款并知悉隐私政策":"Please agree to the Terms of Service and acknowledge the Privacy Policy first",
   "请先阅读并同意协议":"Please read and agree to the terms", "请输入 6 位验证码":"Enter the 6-digit verification code",
   "已重新发送，Ref 更新为 W49a":"Code resent; Ref updated to W49a",
   "会员首页补绑":"Linked from Member Home", "已跳过，稍后可在此重新添加":"Skipped. You can add the store later.",
@@ -501,12 +502,50 @@ const EN = {
   "← 返回 Customers":"← Back to Customers", "已导出未绑定名单（100 行）":"Unlinked list exported (100 rows)",
   "已导出已绑定未关注名单":"Linked non-follower list exported",
   "继续即表示已阅读并同意":"By continuing you have read and agree to ",
-  "，登录无需重复勾选。":", no re-consent required at login.",
+  "继续即表示同意":"By continuing you agree to the ",
+  "并已知悉":"and acknowledge the ",
+  "，登录无需重复确认。":", no re-confirmation required at login.",
+  "我同意":"I agree to the ",
   "同意通过 LINE 接收会员通知与优惠信息":"Consent to receive member notifications and offers via LINE",
+  "同意通过 LINE 接收优惠与促销信息":"Consent to receive offers and promotions via LINE",
+  "同意接收优惠与促销信息":"Consent to receive offers and promotions",
+  "含基于消费与偏好的个性化推荐":"incl. personalized recommendations based on spending and preferences",
   "（非入会条件，可随时退订）":"(not a condition of joining; unsubscribe anytime)",
   "P0 不做 · 后续支持":"Not in P0 · Future support",
   "本期 P0 不做 Rich Menu 入口 · 后续支持（此处仅示意未来体验）":"Rich Menu entry is not in P0 · future support (shown here only as a preview)",
-  "本期 P0 不做该入口，后续支持。":"This entry is not in P0; it will be supported later."
+  "本期 P0 不做该入口，后续支持。":"This entry is not in P0; it will be supported later.",
+  "消息通知":"Notifications",
+  "服务通知（积分到账、订单状态）":"Service notifications (points, order status)",
+  "· 属会员履约":"· membership fulfillment",
+  "营销与优惠通知":"Marketing & offers notifications",
+  "· 非入会条件，可随时退订":"· not a condition of joining; unsubscribe anytime",
+  "营销通知同意":"Marketing consent",
+  "已同意":"Given",
+  "未同意":"Not given",
+  "个人资料":"Profile",
+  "邮箱":"Email",
+  "生日":"Birthday",
+  "资料仅供查看，如需修改联系商家。":"Profile is view-only. To make changes, please contact the merchant.",
+  "通知与隐私":"Notifications & privacy",
+  "· 已通过 LINE 接收":"· delivered via LINE",
+  "· 需先关注 LINE":"· follow LINE first",
+  "隐私政策":"Privacy Policy",
+  "用户服务协议":"User Agreement",
+  "退出登录":"Log out",
+  "查看《隐私政策》":"View the Privacy Policy",
+  "查看《用户服务协议》":"View the User Agreement",
+  "服务通知（积分、订单）":"Service notifications (points, orders)",
+  "已通过 LINE 送达":"Delivered via LINE",
+  "需先关注 LINE":"Follow LINE first",
+  "隐私与条款":"Privacy & Terms",
+  "查看《服务条款》与《隐私政策》":"View the Terms of Service and Privacy Policy",
+  "会员专属：周三咖啡日 8 折":"Members only: 20% off Coffee Wednesdays",
+  "凭会员卡享 Decaf 拿铁 8 折，本周三有效。":"Show your member card for 20% off a decaf latte, valid this Wednesday.",
+  "退订营销通知":"Unsubscribe from marketing",
+  "退订即时生效，服务通知（积分、订单）不受影响":"Unsubscribing takes effect immediately; service notifications (points, orders) are unaffected",
+  "营销消息底部恒带退订入口（《直销与直接营销法》opt-out 要求）；退订与个人资料页开关写同一个同意位，任一入口退订全局生效。":"Every marketing message carries an unsubscribe link (opt-out required by the Direct Sales and Direct Marketing Act); it writes the same consent flag as the profile switch, so opting out anywhere applies everywhere.",
+  "查看 LINE 营销消息示例（含退订入口）":"View a sample LINE marketing message (with unsubscribe)",
+  "已退订营销通知，服务通知不受影响":"Unsubscribed from marketing; service notifications unaffected"
 };
 const EN_PATTERNS = [
   [/^请输入发送至 (.+) 的 6 位验证码$/, "Enter the 6-digit code sent to $1"],
@@ -551,7 +590,7 @@ function updateDemoTitle(){
 function setLang(lang){ UI.lang=lang==='en'?'en':'zh'; render(S.cur||'phone'); }
 const P = {
   h5entry:'H5 登录/注册入口', phone:'手机号登录 / 注册', toline:'H5 跳转 LINE', linephone:'LINE 授权后输入手机号', otpconfirm:'OTP 验证', register:'注册资料',
-  member:'会员中心（我的）', channel:'账号与渠道', lineauth:'LINE 授权', redirect:'授权回跳',
+  member:'会员中心（我的）', profile:'个人资料', channel:'账号与渠道', lineauth:'LINE 授权', redirect:'授权回跳',
   result:'绑定结果', linefriend:'LINE 原生关注页', receipt:'好友添加回执', conflict:'冲突错误页', ephonebound:'手机号冲突错误页', originalhelp:'原 LINE 账号说明',
   rebindverify:'换绑身份验证', rebindconfirm:'换绑确认', rebindsuccess:'换绑成功', unbindverify:'解绑身份验证', unbindconfirm:'解绑确认', unbindsuccess:'解绑成功', estatus:'状态异常页',
   elimit:'风控上限页', echanel:'通道未配置页', liff:'LIFF 识别中', admin:'商家后台', adetail:'后台会员详情'
@@ -559,7 +598,7 @@ const P = {
 function track(k){ S.history.push(k); document.getElementById('path').innerHTML =
   '演示路径：<b>' + S.history.map(h=>P[h]||h).join(' → ') + '</b>'; }
 function back(){ S.history.pop(); const p=S.history.pop(); if(p){ render(p); } else { render('phone'); } }
-function resetAll(){ if(S.timer) clearInterval(S.timer); Object.assign(S,{entry:'web',channel:true,loginWay:'',member:false,phone:null,bound:false,friend:false,friendKnown:true,status:'Active',opened:false,otpFails:0,limited:false,branch:'Jan cafe',sent:false,phErr:false,otpErr:false,agree:false,otp:'',cd:60,timer:null,known:false,history:[],lineAuthorized:false,phoneVerified:false,authIntent:'',forceConflict:false,name:'',birthday:'',gender:'',regErr:false,marketing:false}); render('phone'); }
+function resetAll(){ if(S.timer) clearInterval(S.timer); Object.assign(S,{entry:'web',channel:true,loginWay:'',member:false,phone:null,bound:false,friend:false,friendKnown:true,status:'Active',opened:false,otpFails:0,limited:false,branch:'Jan cafe',sent:false,phErr:false,otpErr:false,agree:false,otp:'',cd:60,timer:null,known:false,history:[],lineAuthorized:false,phoneVerified:false,authIntent:'',forceConflict:false,name:'',birthday:'',gender:'',regErr:false,marketing:false,svcNotify:true,mktNotify:false}); render('phone'); }
 function scenario(k){
   resetAll();
   S.history=[];
@@ -656,7 +695,7 @@ const screens = {
       ${S.otpErr?'<div class="err">验证码错误或已过期</div>':''}
       ${S.sent?`<div class="refline">Ref ${S.ref}</div>`:''}
       <div class="b pri big${(!S.sent||S.otp.length!==6)?' off':''}" onclick="submitOtp()">登录/注册</div>
-      <span class="note" style="display:block;padding:8px 4px 0">继续即表示已阅读并同意<a>《服务条款》</a>与<a>《隐私政策》</a>，登录无需重复勾选。</span>
+      <span class="note" style="display:block;padding:8px 4px 0">继续即表示同意<a>《服务条款》</a>并已知悉<a>《隐私政策》</a>，登录无需重复确认。</span>
       <div style="display:flex;align-items:center;gap:10px;margin:12px 4px;color:var(--ink3);font-size:11px"><span style="height:1px;background:var(--line);flex:1"></span>或<span style="height:1px;background:var(--line);flex:1"></span></div>
       ${(S.channel && !S.lineAuthorized)?`<div class="b line" onclick="startLineLogin()">通过 LINE 登录</div>`:''}
       <span class="note">${S.lineAuthorized?'LINE 授权已完成，请在同一页面完成手机号和验证码验证；本页不再重复展示 Login with LINE。':'手机号与验证码同屏验证；服务条款与隐私政策在注册资料页一次性确认。'}</span>
@@ -690,8 +729,8 @@ const screens = {
       <div class="inwrap"><label class="field-label">性别<span class="required">*</span></label><div class="chips" style="padding:0"><span class="chip${S.gender==='male'?' on':''}" data-value="male" onclick="pick(this)">男</span><span class="chip${S.gender==='female'?' on':''}" data-value="female" onclick="pick(this)">女</span><span class="chip${S.gender==='unspecified'?' on':''}" data-value="unspecified" onclick="pick(this)">不指定</span></div></div>
       <div class="inwrap"><label class="field-label">出生日期（年 / 月 / 日）<span class="required">*</span></label><input class="in" id="bd" type="date" value="${S.birthday}" aria-label="出生日期（年、月、日）" onchange="syncRegister()"></div>
       ${S.regErr?'<div class="err">请完整填写姓名、手机号、性别和出生日期</div>':''}
-      <div class="agree" onclick="S.agree=!S.agree;render('register')"><span class="cbx${S.agree?' on':''}">${S.agree?'✓':''}</span><span>我已阅读并同意<a>《服务条款》</a>与<a>《隐私政策》</a></span></div>
-      <div class="agree" onclick="S.marketing=!S.marketing;render('register')"><span class="cbx${S.marketing?' on':''}">${S.marketing?'✓':''}</span><span>同意通过 LINE 接收会员通知与优惠信息<span style="color:var(--text-4)">（非入会条件，可随时退订）</span></span></div>
+      <div class="agree" onclick="S.agree=!S.agree;render('register')"><span class="cbx${S.agree?' on':''}">${S.agree?'✓':''}</span><span>我同意<a>《服务条款》</a>，并已知悉<a>《隐私政策》</a></span></div>
+      <div class="agree" onclick="S.mktNotify=!S.mktNotify;render('register')"><span class="cbx${S.mktNotify?' on':''}">${S.mktNotify?'✓':''}</span><span>同意接收优惠与促销信息<span style="color:var(--text-4)">（含基于消费与偏好的个性化推荐 · 非入会条件，可随时退订）</span></span></div>
       <div class="inwrap"><div class="b pri" onclick="finishRegister()">提交注册资料</div></div>
       <span class="note">入会门店由注册二维码中的门店参数自动记录，顾客无需填写；通过 LINE 登录的新用户，资料填写完成后再进行 OTP。</span>
       <div class="chips"><span class="chip" onclick="go('phone')">‹ 演示：回登录页</span></div>
@@ -718,9 +757,30 @@ const screens = {
       </div>${tabsNoMember()}`};
     }
     return {frame:'phone', html:`${stat('Jan cafe')}<div class="body">
-      <div class="row" style="padding:12px 4px"><div style="width:38px;height:38px;border-radius:50%;background:#c98a52;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px">张</div>
+      <div class="row" style="padding:12px 4px;cursor:pointer" onclick="go('profile')"><div style="width:38px;height:38px;border-radius:50%;background:#c98a52;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px">张</div>
       <div><div style="font-size:14px;font-weight:600">张三</div><div style="font-size:11px;color:var(--text-4)">+86 ${(S.phone||'18765789009').slice(0,3)}****${(S.phone||'18765789009').slice(-4,)}9009</div></div><span class="ar">›</span></div>
       ${memberCard()}${nums()}${friendCard()}${settingRows()}
+    </div>${tabs('我的')}`};
+  },
+  profile(){
+    const gmap={male:'男',female:'女',unspecified:'不指定'};
+    const g=gmap[S.gender]||'女';
+    return {frame:'phone', html:`${nav('个人资料','member')}<div class="body">
+      <div class="card">
+        <div class="row">姓名<span class="v">${S.name||'Lantern Guest'}</span></div>
+        <div class="row">手机号<span class="v">${S.phone?'+66 '+S.phone:'+66 14568906'}</span></div>
+        <div class="row">邮箱<span class="v">${S.email||'sdfdsfd@sunmi.com'}</span></div>
+        <div class="row">性别<span class="v">${g}</span></div>
+        <div class="row">生日<span class="v">${S.birthday||'1995-08-12'}</span></div>
+      </div>
+      <span class="note" style="display:block;padding:0 4px 12px">资料仅供查看，如需修改联系商家。</span>
+      <div class="card">
+        <div class="row" style="font-weight:600">通知与隐私</div>
+        <div class="agree" style="margin:0;padding:9px 12px" onclick="S.mktNotify=!S.mktNotify;render('profile')"><span class="cbx${S.mktNotify?' on':''}">${S.mktNotify?'✓':''}</span><span>营销与优惠通知<span style="color:var(--text-4)">· 非入会条件，可随时退订</span></span></div>
+        <div class="row"><span class="ic">⛨</span>服务通知（积分、订单）<span class="v">${S.friend?'已通过 LINE 送达':'需先关注 LINE'}</span></div>
+        <div class="row" onclick="toast('查看《服务条款》与《隐私政策》')"><span class="ic">≡</span>隐私与条款<span class="v">›</span></div>
+      </div>
+      <div class="b ghost" style="margin-top:6px" onclick="resetAll()">退出登录</div>
     </div>${tabs('我的')}`};
   },
   channel(){
@@ -772,7 +832,8 @@ const screens = {
       <div class="card" style="border:1px solid #8cc5a0"><div class="row" style="color:var(--success-5);font-weight:600">绑定成功</div>
       <div class="row">已关联会员<span class="v">${(S.phone||'0995157826').slice(0,3)}****${(S.phone||'0995157826').slice(-4)}</span></div>
       <div class="row">绑定来源<span class="v">${S.entry==='lineLogin'?'Login with LINE':'会员首页 Add LINE'}</span></div></div>
-      <div class="card"><div class="agree" style="margin:0;padding:11px 12px" onclick="S.marketing=!S.marketing;render('result')"><span class="cbx${S.marketing?' on':''}">${S.marketing?'✓':''}</span><span>同意通过 LINE 接收会员通知与优惠信息<span style="color:var(--text-4)">（非入会条件，可随时退订）</span></span></div></div>
+      <div class="card"><div class="agree" style="margin:0;padding:11px 12px" onclick="S.mktNotify=!S.mktNotify;render('result')"><span class="cbx${S.mktNotify?' on':''}">${S.mktNotify?'✓':''}</span><span>同意接收优惠与促销信息<span style="color:var(--text-4)">（含基于消费与偏好的个性化推荐 · 非入会条件，可随时退订）</span></span></div></div>
+      ${S.mktNotify?`<div class="card"><div class="row" onclick="go('linemsg')"><span class="ic">◉</span>查看 LINE 营销消息示例（含退订入口）<span class="v">›</span></div></div>`:''}
       ${needsFollowPrompt()?`<div class="card edge"><div class="row" style="font-weight:600">关注门店 LINE 才能收到通知</div>
       <div class="row blk">关注后可接收订单、积分与权益提醒</div>
       <div style="padding:0 12px 12px"><div class="b line" onclick="addFriend()">前往 LINE 关注</div>
@@ -788,6 +849,23 @@ const screens = {
       <div class="b line" onclick="confirmLineFollow()">添加好友</div>
       <div class="b ghost" onclick="go('member')">取消</div>
       <span class="note">此处为 LINE 原生加好友页面；CRM 不能直接替顾客关注。</span>
+    </div>`};
+  },
+  linemsg(){
+    return {frame:'phone', html:`${stat('LINE · Jan cafe')}<div class="body">
+      <div style="text-align:center;font-size:10px;color:var(--ink3);padding:8px 0">今天 12:03</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <div style="width:30px;height:30px;border-radius:8px;background:#06c755;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">J</div>
+        <div style="max-width:78%">
+          <div style="background:#fff;border-radius:2px 12px 12px 12px;padding:10px 12px;font-size:12.5px;box-shadow:0 1px 1px rgba(0,0,0,.04)">
+            <div style="font-weight:600;margin-bottom:4px">☕ 会员专属：周三咖啡日 8 折</div>
+            <div style="color:var(--text-4)">凭会员卡享 Decaf 拿铁 8 折，本周三有效。</div>
+            <div style="margin-top:8px;padding-top:8px;border-top:1px solid #eef0f2;text-align:center"><span style="color:#5b8def;font-size:11.5px;cursor:pointer" onclick="unsubscribeMarketing()">⌄ 退订营销通知</span></div>
+          </div>
+          <div style="font-size:10px;color:var(--ink3);margin:4px 0 0 4px">退订即时生效，服务通知（积分、订单）不受影响</div>
+        </div>
+      </div>
+      <span class="note" style="display:block;padding:8px 4px 0">营销消息底部恒带退订入口（《直销与直接营销法》opt-out 要求）；退订与个人资料页开关写同一个同意位，任一入口退订全局生效。</span>
     </div>`};
   },
   receipt(){
@@ -949,7 +1027,7 @@ const screens = {
 function finishRegister(){
   syncRegister();
   if(!S.name.trim() || !S.phone || !S.gender || !S.birthday){ S.regErr=true; render('register'); return; }
-  if(!S.agree){ toast('请先阅读并同意服务条款与隐私政策'); return; }
+  if(!S.agree){ toast('请先同意服务条款并知悉隐私政策'); return; }
   S.regErr=false;
   S.member=true; S.opened=true;
   if(S.lineAuthorized){ S.bound=true; go(needsFollowPrompt()?'result':'member'); }
@@ -1030,6 +1108,7 @@ function afterIdentify(){
   if(S.member){ S.bound=true; S.loginWay='会员首页补绑'; go(needsFollowPrompt()?'result':'member'); return; }
   go('phone');
 }
+function unsubscribeMarketing(){ S.mktNotify=false; toast('已退订营销通知，服务通知不受影响'); go('linemsg'); }
 function richMenuLinked(){
   S.member=true; S.opened=true; S.bound=true; S.friend=true; S.friendKnown=true; S.known=true; go('member');
 }
@@ -1104,6 +1183,7 @@ function render(v){
     ['LINE 绑定', S.bound?'<span class="dot g"></span>已绑定':'<span class="dot n"></span>未绑定'],
     ['LINE OA 好友状态', !S.friendKnown?'<span class="dot n"></span>待确认':(S.friend?'<span class="dot o"></span>已关注':'<span class="dot n"></span>未关注')],
     ['CRM 消息可触达', !S.friendKnown?'—':(isReachable()?'是':'否')],
+    ['营销通知同意', S.mktNotify?'已同意':'未同意'],
     ['会员状态', S.status],
   ].map(r=>`<div class="st"><span>${r[0]}</span><span>${r[1]}</span></div>`).join('');
   document.querySelectorAll('.panel .btn').forEach(b=>b.classList.remove('on'));
