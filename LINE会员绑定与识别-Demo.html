@@ -179,8 +179,11 @@
     </div>
     <h2>核心场景</h2>
     <button class="btn simple-only" onclick="scenario('h5Entry')">从 H5 登录/注册</button>
-    <button class="btn simple-only" onclick="scenario('richMenu')">从 LINE 登录/注册</button>
+    <button class="btn simple-only" onclick="scenario('richMenu')">从 LINE 登录/注册 <span style="display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#9aa2ab;border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle">P0 不做 · 后续支持</span></button>
     <div class="simple-only">
+      <h2>状态场景</h2>
+      <button class="btn" onclick="scenario('boundUnfollowed')">已绑定但未关注 OA</button>
+      <button class="btn" onclick="scenario('friendUnknown')">好友状态未知 / 待确认</button>
       <h2>异常场景</h2>
       <button class="btn" onclick="scenario('conflict')">冲突：该 LINE 已绑定其他会员</button>
       <button class="btn" onclick="scenario('phoneConflict')">冲突：该手机号已绑定其他 LINE</button>
@@ -194,9 +197,11 @@
       <button class="btn" onclick="scenario('lineLogin')">新会员注册并绑定 LINE</button>
       <div class="scenario-label">LINE 内与会员绑定</div>
       <button class="btn" onclick="scenario('memberBind')">从会员中心绑定 LINE</button>
-      <button class="btn" onclick="scenario('richMenu')">从 Rich Menu 登录或注册</button>
+      <button class="btn" onclick="scenario('richMenu')">从 Rich Menu 登录或注册 <span style="display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#9aa2ab;border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle">P0 不做 · 后续支持</span></button>
       <button class="btn" onclick="scenario('bound')">已绑定会员免登录进入</button>
       <button class="btn" onclick="scenario('manageBinding')">管理或解除 LINE 绑定</button>
+      <button class="btn" onclick="scenario('boundUnfollowed')">已绑定但未关注 OA</button>
+      <button class="btn" onclick="scenario('friendUnknown')">好友状态未知 / 待确认</button>
       <h2>异常场景</h2>
       <button class="btn" onclick="scenario('conflict')">冲突：该 LINE 已绑定其他会员</button>
       <button class="btn" onclick="scenario('phoneConflict')">冲突：该手机号已绑定其他 LINE</button>
@@ -248,7 +253,7 @@
       </article>
 
       <article class="flow-card wide">
-        <div class="flow-head"><span class="flow-no">03</span>LINE Rich Menu 登录/注册</div>
+        <div class="flow-head"><span class="flow-no">03</span>LINE Rich Menu 登录/注册 <span style="display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#9aa2ab;border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle">P0 不做 · 后续支持</span></div>
         <div class="flow-row">
           <div class="flow-step"><strong>点击 Rich Menu</strong><small>进入会员中心入口</small></div><span class="flow-arrow">→</span>
           <div class="flow-step"><strong>打开 LIFF</strong><small>获取 LINE User ID</small></div><span class="flow-arrow">→</span>
@@ -259,7 +264,7 @@
           <div class="flow-branch ok"><b>已绑定会员</b><div class="flow-chain"><span>免输入</span> → <span>直接进入会员中心</span></div></div>
           <div class="flow-branch new"><b>未绑定</b><div class="flow-chain"><span>手机号＋验证码</span> → <span>已有会员：建立绑定</span> / <span>新用户：填写资料并创建会员</span> → <span>进入会员中心</span></div></div>
         </div>
-        <div class="flow-note">从 Rich Menu 进入时顾客已经是 OA 好友；完成绑定后可使用 LINE 身份免登录进入。</div>
+        <div class="flow-note">从 Rich Menu 进入时顾客已经是 OA 好友；完成绑定后可使用 LINE 身份免登录进入。<b style="color:#5f676e">本期 P0 不做该入口，后续支持。</b></div>
       </article>
     </div>
   </section>
@@ -274,9 +279,9 @@
 <script>
 const S = {
   entry: '', channel: true, loginWay: '', member: false, phone: null,
-  bound: false, friend: false, status: 'Active', opened: false,
+  bound: false, friend: false, friendKnown: true, status: 'Active', opened: false,
   otpFails: 0, limited: false, ref: 'W48i', branch: 'Jan cafe', known: false, sent: false, phErr: false, otpErr: false, agree: false, otp: '', cd: 60, timer: null, history: [], lineAuthorized:false, phoneVerified:false, authIntent:'', forceConflict:false,
-  name:'', birthday:'', gender:'', regErr:false
+  name:'', birthday:'', gender:'', regErr:false, marketing:false
 };
 const UI = { lang:'zh' };
 const EN = {
@@ -295,6 +300,8 @@ const EN = {
   "从会员中心绑定 LINE":"Link LINE from Member Center", "从 Rich Menu 登录或注册":"Log in or register from Rich Menu",
   "已绑定会员免登录进入":"Linked member: enter without login",
   "管理或解除 LINE 绑定":"Manage or unlink LINE",
+  "状态场景":"Status scenarios", "已绑定但未关注 OA":"Linked but not following OA",
+  "好友状态未知 / 待确认":"Friend status unknown / Pending confirmation",
   "异常场景":"Exception scenarios", "当前状态":"Current status", "操作":"Actions",
   "路径① 手机号登录（已有会员）":"Path 1 · Phone login (existing member)",
   "路径② 手机号注册（新会员）":"Path 2 · Phone registration (new member)",
@@ -323,8 +330,9 @@ const EN = {
   "通道配置":"Channel setup", "已配置":"Configured", "未配置":"Not configured",
   "会员":"Member", "已登录 / 已注册":"Logged in / registered", "未登录":"Not logged in",
   "LINE 绑定":"LINE linking", "已绑定":"Linked", "未绑定":"Not linked",
-  "OA 好友":"OA friend", "已关注":"Following", "未关注":"Not following",
+  "OA 好友":"OA friend", "已关注":"Following", "未关注":"Not following", "待确认":"Pending",
   "LINE OA 好友状态":"LINE OA friend status", "CRM 消息可触达":"CRM message reachable",
+  "LINE 通知状态":"LINE notification status", "可接收":"Available", "暂不可接收":"Unavailable",
   "可触达":"Reachable", "是":"Yes", "否":"No", "会员状态":"Member status",
   "品牌页":"Brand", "点单":"Order", "订单":"Orders", "我的":"Me", "门店":"Store",
   "‹ 返回":"‹ Back", "黑金会员":"Black Gold Member",
@@ -332,11 +340,17 @@ const EN = {
   "积分":"Points", "储值余额":"Stored balance", "去绑定 ›":"Link now ›",
   "切换语言":"Language", "简体中文 ›":"English ›", "就餐人数":"Party size",
   "就餐类型":"Dining type", "堂食 ›":"Dine-in ›", "门店信息":"Store information", "切换门店":"Switch store",
-  "Add LINE and enjoy special benefits!":"Add LINE and enjoy special benefits!",
-  "连接 LINE 后可用 LINE 登录，并接收会员权益通知":"Link LINE to sign in and receive membership notifications",
-  "添加店铺好友，领取多重权益":"Add the store as a friend to enjoy more benefits",
-  "关注后才能收到订单、积分与活动通知":"Follow the store to receive order, point and campaign notifications",
-  "添加好友":"Add friend", "以后再说":"Not now",
+  "绑定 LINE 账号":"Link LINE account",
+  "绑定后可使用 LINE 快捷登录，并关联当前会员身份。":"After linking, use LINE for quick login and connect it to the current membership.",
+  "关注商家 LINE 官方账号":"Follow the merchant LINE Official Account",
+  "当前 LINE 已绑定会员，但尚未关注官方账号。关注后可接收积分、订单及会员权益通知。":"This LINE account is linked to the member but is not following the Official Account. Follow it to receive point, order and membership benefit notifications.",
+  "好友状态待确认":"Friend status pending confirmation",
+  "正在同步 LINE 官方账号好友状态，请稍后再查看。":"The LINE Official Account friend status is being synchronized. Please check again later.",
+  "前往 LINE 关注":"Follow in LINE", "以后再说":"Not now",
+  "即将打开 LINE 官方账号":"Opening LINE Official Account", "关注操作将在 LINE 原生页面完成":"The follow action is completed on LINE's native page",
+  "Jan cafe 官方账号":"Jan cafe Official Account", "添加好友":"Add friend", "取消":"Cancel",
+  "官方账号":"Official Account", "添加好友后，LINE 会通过 follow Webhook 通知 CRM 更新状态。":"After the account is added, LINE sends a follow Webhook so CRM can update the status.",
+  "此处为 LINE 原生加好友页面；CRM 不能直接替顾客关注。":"This is LINE's native add-friend page. CRM cannot follow the account on the customer's behalf.",
   "确认会员手机号":"Confirm member phone", "区号选择：+66（泰国）/ +86 …":"Country code: +66 (Thailand) / +86 …",
   "请输入有效的手机号码":"Enter a valid phone number", "请输入验证码":"Enter verification code",
   "验证码错误或已过期":"The code is incorrect or expired", "获取":"Get code",
@@ -344,7 +358,7 @@ const EN = {
   "《用户服务协议》":"User Agreement", "《服务条款》":"Terms of Service", "、":" and ", "与":" and ",
   "登录/注册":"Log in / Register", "或":"or", "通过 LINE 登录":"Login with LINE",
   "LINE 授权已完成，请在同一页面完成手机号和验证码验证；本页不再重复展示 Login with LINE。":"LINE authorization is complete. Verify your phone and OTP on this page; Login with LINE is not shown again.",
-  "手机号登录/注册沿用现有页面：手机号、验证码和协议同屏。":"The existing phone login/registration page is retained: phone, OTP and consent stay on one page.",
+  "手机号与验证码同屏验证；服务条款与隐私政策在注册资料页一次性确认。":"Phone and OTP are verified on one page; the Terms and Privacy Policy are confirmed once on the registration page.",
   "确认手机号":"Confirm phone number", "输入手机号":"Enter phone number",
   "用于识别已有会员或注册新会员":"Used to identify an existing member or register a new one",
   "请输入手机号":"Enter phone number", "继续":"Continue",
@@ -477,15 +491,22 @@ const EN = {
   "门店 S1 · 数据权限范围内":"Store S1 · Within data access scope", "GPOS 现有导航（占位）":"Current GPOS navigation (placeholder)",
   "已绑定未关注":"Linked, not following", "已绑定 LINE":"LINE linked", "已关注 OA":"Following OA",
   "未绑定 / 未关注":"Not linked / not following", "图例与悬浮说明为本期必须":"Legend and hover help are required in this release",
-  "绑定状态：全部 ▾":"Link status: All ▾", "关注状态：全部 ▾":"Follow status: All ▾", "时间范围 ▾":"Date range ▾",
+  "绑定状态：全部 ▾":"Link status: All ▾", "关注状态：全部 ▾":"Follow status: All ▾", "关注状态：全部（含待确认） ▾":"Follow status: All (including pending) ▾", "时间范围 ▾":"Date range ▾",
   "导出未绑定名单":"Export unlinked list", "导出已绑定未关注":"Export linked non-followers",
   "最近绑定":"Latest link", "操作":"Actions",
-  "最后一行为状态查询失败变体：图标置灰、可触达显示「—」，不默认成未绑定或未关注。操作列恒为「—」，后台无任何解绑 / 换绑 / 代绑入口。":"The last row shows a status-query failure: icons are grey and Reachable displays ‘—’, rather than defaulting to not linked or not following. Actions always display ‘—’; admin provides no unlink, relink or proxy-link action.",
+  "最后一行为渠道状态未知变体：状态库暂无明确记录或同步待确认；图标置灰、可触达显示「—」，不默认成未绑定或未关注。操作列恒为「—」，后台无任何解绑 / 换绑 / 代绑入口。":"The last row represents an unknown channel status: the status store has no definitive record yet or synchronization is pending. Icons are grey and Reachable displays ‘—’ instead of defaulting to not linked or not following. Actions always display ‘—’; admin provides no unlink, relink or proxy-link action.",
   "只读 · 无解绑 / 换绑入口":"Read-only · No unlink or relink action", "LINE 绑定状态":"LINE link status",
   "OA 好友状态":"OA friend status", "绑定时间":"Linked at",
   "本区块只读；P0 解绑与换绑仅通过顾客端身份验证流程操作，后台不提供按钮。":"This section is read-only. In P0, unlinking and relinking are available only through the customer identity-verification flow; admin provides no action.",
   "← 返回 Customers":"← Back to Customers", "已导出未绑定名单（100 行）":"Unlinked list exported (100 rows)",
-  "已导出已绑定未关注名单":"Linked non-follower list exported"
+  "已导出已绑定未关注名单":"Linked non-follower list exported",
+  "继续即表示已阅读并同意":"By continuing you have read and agree to ",
+  "，登录无需重复勾选。":", no re-consent required at login.",
+  "同意通过 LINE 接收会员通知与优惠信息":"Consent to receive member notifications and offers via LINE",
+  "（非入会条件，可随时退订）":"(not a condition of joining; unsubscribe anytime)",
+  "P0 不做 · 后续支持":"Not in P0 · Future support",
+  "本期 P0 不做 Rich Menu 入口 · 后续支持（此处仅示意未来体验）":"Rich Menu entry is not in P0 · future support (shown here only as a preview)",
+  "本期 P0 不做该入口，后续支持。":"This entry is not in P0; it will be supported later."
 };
 const EN_PATTERNS = [
   [/^请输入发送至 (.+) 的 6 位验证码$/, "Enter the 6-digit code sent to $1"],
@@ -531,14 +552,14 @@ function setLang(lang){ UI.lang=lang==='en'?'en':'zh'; render(S.cur||'phone'); }
 const P = {
   h5entry:'H5 登录/注册入口', phone:'手机号登录 / 注册', toline:'H5 跳转 LINE', linephone:'LINE 授权后输入手机号', otpconfirm:'OTP 验证', register:'注册资料',
   member:'会员中心（我的）', channel:'账号与渠道', lineauth:'LINE 授权', redirect:'授权回跳',
-  result:'绑定结果', receipt:'好友添加回执', conflict:'冲突错误页', ephonebound:'手机号冲突错误页', originalhelp:'原 LINE 账号说明',
+  result:'绑定结果', linefriend:'LINE 原生关注页', receipt:'好友添加回执', conflict:'冲突错误页', ephonebound:'手机号冲突错误页', originalhelp:'原 LINE 账号说明',
   rebindverify:'换绑身份验证', rebindconfirm:'换绑确认', rebindsuccess:'换绑成功', unbindverify:'解绑身份验证', unbindconfirm:'解绑确认', unbindsuccess:'解绑成功', estatus:'状态异常页',
   elimit:'风控上限页', echanel:'通道未配置页', liff:'LIFF 识别中', admin:'商家后台', adetail:'后台会员详情'
 };
 function track(k){ S.history.push(k); document.getElementById('path').innerHTML =
   '演示路径：<b>' + S.history.map(h=>P[h]||h).join(' → ') + '</b>'; }
 function back(){ S.history.pop(); const p=S.history.pop(); if(p){ render(p); } else { render('phone'); } }
-function resetAll(){ if(S.timer) clearInterval(S.timer); Object.assign(S,{entry:'web',channel:true,loginWay:'',member:false,phone:null,bound:false,friend:false,status:'Active',opened:false,otpFails:0,limited:false,branch:'Jan cafe',sent:false,phErr:false,otpErr:false,agree:false,otp:'',cd:60,timer:null,known:false,history:[],lineAuthorized:false,phoneVerified:false,authIntent:'',forceConflict:false,name:'',birthday:'',gender:'',regErr:false}); render('phone'); }
+function resetAll(){ if(S.timer) clearInterval(S.timer); Object.assign(S,{entry:'web',channel:true,loginWay:'',member:false,phone:null,bound:false,friend:false,friendKnown:true,status:'Active',opened:false,otpFails:0,limited:false,branch:'Jan cafe',sent:false,phErr:false,otpErr:false,agree:false,otp:'',cd:60,timer:null,known:false,history:[],lineAuthorized:false,phoneVerified:false,authIntent:'',forceConflict:false,name:'',birthday:'',gender:'',regErr:false,marketing:false}); render('phone'); }
 function scenario(k){
   resetAll();
   S.history=[];
@@ -550,6 +571,8 @@ function scenario(k){
   if(k==='memberBind'){ S.member=true; S.opened=true; S.phone='0995157826'; S.entry='member'; render('member'); return; }
   if(k==='richMenu'){ S.entry='richMenu'; S.authIntent='login'; S.lineAuthorized=true; S.friend=true; render('liff'); return; }
   if(k==='bound'){ S.member=true; S.bound=true; S.friend=true; S.entry='lineLogin'; S.authIntent='login'; render('toline'); return; }
+  if(k==='boundUnfollowed'){ S.member=true; S.opened=true; S.bound=true; S.friend=false; S.phone='0995157826'; S.entry='member'; render('member'); return; }
+  if(k==='friendUnknown'){ S.member=true; S.opened=true; S.bound=true; S.friend=false; S.friendKnown=false; S.channel=true; S.phone='0995157826'; S.entry='member'; render('channel'); return; }
   if(k==='manageBinding'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.phone='0995157826'; S.entry='member'; render('channel'); return; }
   if(k==='conflict'){ S.member=true; S.opened=true; S.phone='0995157826'; S.entry='member'; render('conflict'); return; }
   if(k==='phoneConflict'){ S.member=true; S.opened=true; S.phone='0995157826'; S.entry='member'; render('ephonebound'); return; }
@@ -566,6 +589,10 @@ const tabsNoMember = ()=>`<div class="tabs"><div><i>◑</i>点单</div><div><i>�
 const stat = (title,backTo)=>`<div class="stat"><span>${backTo?`<span class="back" onclick="go('${backTo}')">‹ 返回</span>`:''}${title||''}</span><span>9:41</span></div>`;
 const nav = (title,backTo)=>`<div class="nav">${backTo?`<span class="back" onclick="go('${backTo}')">‹ 返回</span>`:'<span></span>'}<span>${title}</span></div>`;
 const badge = (t,c)=>`<span class="badge ${c}">${t}</span>`;
+const friendStatusText = ()=>!S.friendKnown?'待确认':(S.friend?'已关注':'未关注');
+const friendStatusBadge = ()=>!S.friendKnown?badge('待确认','na'):(S.friend?badge('已关注','on'):badge('未关注','na'));
+const isReachable = ()=>S.bound&&S.friendKnown&&S.friend&&S.channel;
+const needsFollowPrompt = ()=>S.bound&&S.friendKnown&&!S.friend;
 const esc = value=>String(value??'').replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
 
 function memberCard(){
@@ -581,7 +608,7 @@ function nums(){ return `<div class="card" style="display:flex;padding:12px 0;ma
 }
 function settingRows(){
   const line = S.bound
-    ? `<div class="row hl" onclick="go('channel')"><span class="ic">◔</span>LINE 绑定 ${badge('已绑定','on')}<span class="v">${S.friend?'已关注':'未关注'} ›</span></div>`
+    ? `<div class="row hl" onclick="go('channel')"><span class="ic">◔</span>LINE 绑定 ${badge('已绑定','on')}<span class="v">${friendStatusText()} ›</span></div>`
     : '';
   return `<div class="card">
     <div class="row"><span class="ic">⊕</span>切换语言<span class="v">简体中文 ›</span></div>
@@ -593,17 +620,21 @@ function settingRows(){
 }
 function friendCard(){
   if(S.member && !S.bound) return `<div class="card edgeG">
-    <div class="row" style="font-weight:600;color:#0b7d3a">Add LINE and enjoy special benefits!</div>
-    <div class="row blk">连接 LINE 后可用 LINE 登录，并接收会员权益通知</div>
-    <div style="padding:0 12px 12px"><div class="b line" onclick="startLineBinding()">Add LINE</div></div></div>`;
-  if(S.bound && !S.friend) return `<div class="card edgeG">
-    <div class="row" style="font-weight:600;color:#0b7d3a">添加店铺好友，领取多重权益</div>
-    <div class="row blk">关注后才能收到订单、积分与活动通知</div>
-    <div style="padding:0 12px 12px"><div class="b line" onclick="addFriend()">添加好友</div>
+    <div class="row" style="font-weight:600;color:#0b7d3a">绑定 LINE 账号</div>
+    <div class="row blk">绑定后可使用 LINE 快捷登录，并关联当前会员身份。</div>
+    <div style="padding:0 12px 12px"><div class="b line" onclick="startLineBinding()">绑定 LINE 账号</div></div></div>`;
+  if(needsFollowPrompt()) return `<div class="card edgeG">
+    <div class="row" style="font-weight:600;color:#0b7d3a">关注商家 LINE 官方账号</div>
+    <div class="row blk">当前 LINE 已绑定会员，但尚未关注官方账号。关注后可接收积分、订单及会员权益通知。</div>
+    <div style="padding:0 12px 12px"><div class="b line" onclick="addFriend()">前往 LINE 关注</div>
     <div class="b ghost" onclick="toast('已跳过，稍后可在此重新添加')">以后再说</div></div></div>`;
+  if(S.bound && !S.friendKnown) return `<div class="card">
+    <div class="row" style="font-weight:600">好友状态待确认</div>
+    <div class="row blk">正在同步 LINE 官方账号好友状态，请稍后再查看。</div></div>`;
   return '';
 }
-function addFriend(){ S.friend=true; render('receipt'); }
+function addFriend(){ render('linefriend'); }
+function confirmLineFollow(){ S.friend=true; S.friendKnown=true; render('receipt'); }
 function startLineLogin(){ S.entry='lineLogin'; S.authIntent='login'; render('toline'); }
 function startLineBinding(){ S.entry='member'; S.authIntent='bind'; render('toline'); }
 
@@ -623,12 +654,12 @@ const screens = {
       ${S.phErr?'<div class="err">请输入有效的手机号码</div>':''}
       <div class="fild"><span class="ic2">⛨</span><input id="otp" placeholder="请输入验证码" value="${S.otp||''}" inputmode="numeric" maxlength="6" oninput="sync()">${S.sent?`<span class="get dis">${S.cd}s</span>`:`<span class="get" onclick="getCode()">获取</span>`}</div>
       ${S.otpErr?'<div class="err">验证码错误或已过期</div>':''}
-      <div class="agree" onclick="S.agree=!S.agree;render('phone')"><span class="cbx${S.agree?' on':''}">${S.agree?'✓':''}</span><span>我已阅读并同意<a>《隐私政策》</a>、<a>《用户服务协议》</a></span></div>
       ${S.sent?`<div class="refline">Ref ${S.ref}</div>`:''}
-      <div class="b pri big${(!S.sent||S.otp.length!==6||!S.agree)?' off':''}" onclick="submitOtp()">登录/注册</div>
+      <div class="b pri big${(!S.sent||S.otp.length!==6)?' off':''}" onclick="submitOtp()">登录/注册</div>
+      <span class="note" style="display:block;padding:8px 4px 0">继续即表示已阅读并同意<a>《服务条款》</a>与<a>《隐私政策》</a>，登录无需重复勾选。</span>
       <div style="display:flex;align-items:center;gap:10px;margin:12px 4px;color:var(--ink3);font-size:11px"><span style="height:1px;background:var(--line);flex:1"></span>或<span style="height:1px;background:var(--line);flex:1"></span></div>
       ${(S.channel && !S.lineAuthorized)?`<div class="b line" onclick="startLineLogin()">通过 LINE 登录</div>`:''}
-      <span class="note">${S.lineAuthorized?'LINE 授权已完成，请在同一页面完成手机号和验证码验证；本页不再重复展示 Login with LINE。':'手机号登录/注册沿用现有页面：手机号、验证码和协议同屏。'}</span>
+      <span class="note">${S.lineAuthorized?'LINE 授权已完成，请在同一页面完成手机号和验证码验证；本页不再重复展示 Login with LINE。':'手机号与验证码同屏验证；服务条款与隐私政策在注册资料页一次性确认。'}</span>
     </div>`};
   },
   linephone(){
@@ -660,6 +691,7 @@ const screens = {
       <div class="inwrap"><label class="field-label">出生日期（年 / 月 / 日）<span class="required">*</span></label><input class="in" id="bd" type="date" value="${S.birthday}" aria-label="出生日期（年、月、日）" onchange="syncRegister()"></div>
       ${S.regErr?'<div class="err">请完整填写姓名、手机号、性别和出生日期</div>':''}
       <div class="agree" onclick="S.agree=!S.agree;render('register')"><span class="cbx${S.agree?' on':''}">${S.agree?'✓':''}</span><span>我已阅读并同意<a>《服务条款》</a>与<a>《隐私政策》</a></span></div>
+      <div class="agree" onclick="S.marketing=!S.marketing;render('register')"><span class="cbx${S.marketing?' on':''}">${S.marketing?'✓':''}</span><span>同意通过 LINE 接收会员通知与优惠信息<span style="color:var(--text-4)">（非入会条件，可随时退订）</span></span></div>
       <div class="inwrap"><div class="b pri" onclick="finishRegister()">提交注册资料</div></div>
       <span class="note">入会门店由注册二维码中的门店参数自动记录，顾客无需填写；通过 LINE 登录的新用户，资料填写完成后再进行 OTP。</span>
       <div class="chips"><span class="chip" onclick="go('phone')">‹ 演示：回登录页</span></div>
@@ -667,6 +699,7 @@ const screens = {
   },
   liff(){
     return {frame:'phone', html:`${stat('会员中心')}<div class="body center">
+      <div style="width:100%;text-align:center;background:#eef1f4;color:#5f676e;border:1px dashed #b6bcc4;border-radius:8px;padding:7px 10px;font-size:11.5px;font-weight:700;margin-bottom:10px">本期 P0 不做 Rich Menu 入口 · 后续支持（此处仅示意未来体验）</div>
       <div class="spin"></div><div class="t">从 LINE Rich Menu 打开会员中心</div>
       <span class="p">系统先通过 LIFF 识别 LINE 身份，再判断绑定关系</span>
       <div style="margin-top:18px"><div class="b pri" onclick="richMenuLinked()">已绑定会员：免登录进入</div>
@@ -694,9 +727,11 @@ const screens = {
     return {frame:'phone', html:`${nav('LINE 绑定','member')}<div class="body">
       <div class="card">
         <div class="row">绑定状态<span class="v">${S.bound?badge('已绑定','on'):badge('未绑定','na')}</span></div>
-        <div class="row">LINE OA 好友状态<span class="v">${S.friend?badge('已关注','on'):badge('未关注','na')}</span></div>
-        <div class="row">CRM 消息可触达<span class="v">${S.bound&&S.friend?badge('是','on'):badge('否','off')}</span></div>
+        <div class="row">LINE OA 好友状态<span class="v">${friendStatusBadge()}</span></div>
+        <div class="row">LINE 通知状态<span class="v">${!S.friendKnown?badge('待确认','na'):(isReachable()?badge('可接收','on'):badge('暂不可接收','off'))}</span></div>
       </div>
+      ${needsFollowPrompt()?`<div class="card edgeG"><div class="row" style="font-weight:600;color:#0b7d3a">关注商家 LINE 官方账号</div><div class="row blk">当前 LINE 已绑定会员，但尚未关注官方账号。关注后可接收积分、订单及会员权益通知。</div><div style="padding:0 12px 12px"><div class="b line" onclick="addFriend()">前往 LINE 关注</div></div></div>`:''}
+      ${S.bound&&!S.friendKnown?`<div class="card"><div class="row" style="font-weight:600">好友状态待确认</div><div class="row blk">正在同步 LINE 官方账号好友状态，请稍后再查看。</div></div>`:''}
       ${S.bound
         ? `<div class="b ghost" onclick="beginUnbind()">解除 LINE 绑定</div><span class="note">P0 支持手机号 OTP 验证后自助解绑。</span>`
         : `<div class="b pri" onclick="go('linauth')">绑定 LINE</div>`}
@@ -737,11 +772,23 @@ const screens = {
       <div class="card" style="border:1px solid #8cc5a0"><div class="row" style="color:var(--success-5);font-weight:600">绑定成功</div>
       <div class="row">已关联会员<span class="v">${(S.phone||'0995157826').slice(0,3)}****${(S.phone||'0995157826').slice(-4)}</span></div>
       <div class="row">绑定来源<span class="v">${S.entry==='lineLogin'?'Login with LINE':'会员首页 Add LINE'}</span></div></div>
-      ${!S.friend?`<div class="card edge"><div class="row" style="font-weight:600">关注门店 LINE 才能收到通知</div>
+      <div class="card"><div class="agree" style="margin:0;padding:11px 12px" onclick="S.marketing=!S.marketing;render('result')"><span class="cbx${S.marketing?' on':''}">${S.marketing?'✓':''}</span><span>同意通过 LINE 接收会员通知与优惠信息<span style="color:var(--text-4)">（非入会条件，可随时退订）</span></span></div></div>
+      ${needsFollowPrompt()?`<div class="card edge"><div class="row" style="font-weight:600">关注门店 LINE 才能收到通知</div>
       <div class="row blk">关注后可接收订单、积分与权益提醒</div>
-      <div style="padding:0 12px 12px"><div class="b line" onclick="addFriend()">添加门店好友</div>
+      <div style="padding:0 12px 12px"><div class="b line" onclick="addFriend()">前往 LINE 关注</div>
       <div class="b ghost" onclick="go('member')">以后再说</div></div></div>`:''}
     </div>${tabs('我的')}`};
+  },
+  linefriend(){
+    return {frame:'phone', html:`${stat('LINE')}<div class="body center">
+      <div class="t">即将打开 LINE 官方账号</div>
+      <span class="p">关注操作将在 LINE 原生页面完成</span>
+      <div class="jump"><div class="jumpapp"><i>H5</i><span>会员中心</span></div><div class="jumparrow">→</div><div class="jumpapp lineapp"><i>LINE</i><span>官方账号</span></div></div>
+      <div class="card"><div class="row" style="font-weight:600">Jan cafe 官方账号</div><div class="row blk">添加好友后，LINE 会通过 follow Webhook 通知 CRM 更新状态。</div></div>
+      <div class="b line" onclick="confirmLineFollow()">添加好友</div>
+      <div class="b ghost" onclick="go('member')">取消</div>
+      <span class="note">此处为 LINE 原生加好友页面；CRM 不能直接替顾客关注。</span>
+    </div>`};
   },
   receipt(){
     return {frame:'phone', html:`${stat('Jan cafe')}<div class="body" style="position:relative">
@@ -866,11 +913,11 @@ const screens = {
       <div class="pgt">Customers</div>
       <div class="legend" style="margin-bottom:8px">All members 5 of 1,204 ｜ 已绑定 738 ｜ 可触达 512 ｜ 已绑定未关注 226</div>
       <div class="legend"><span>${dot(1)}已绑定 LINE</span><span>${fr(1)}已关注 OA</span><span><span class="dot n"></span>未绑定 / 未关注</span><span style="margin-left:auto;color:var(--danger-5)">图例与悬浮说明为本期必须</span></div>
-      <div class="chips" style="padding:0 0 9px"><span class="chip on">All Branches ×</span><span class="chip on">绑定状态：全部 ▾</span><span class="chip on">关注状态：全部 ▾</span><span class="chip">时间范围 ▾</span><span class="chip" onclick="toast('已导出未绑定名单（100 行）')">导出未绑定名单</span><span class="chip" onclick="toast('已导出已绑定未关注名单')">导出已绑定未关注</span></div>
+      <div class="chips" style="padding:0 0 9px"><span class="chip on">All Branches ×</span><span class="chip on">绑定状态：全部 ▾</span><span class="chip on">关注状态：全部（含待确认） ▾</span><span class="chip">时间范围 ▾</span><span class="chip" onclick="toast('已导出未绑定名单（100 行）')">导出未绑定名单</span><span class="chip" onclick="toast('已导出已绑定未关注名单')">导出已绑定未关注</span></div>
       <table><thead><tr><th>Member</th><th>Phone Number</th><th>Email</th><th>Birthday</th><th>Spending</th><th>Balance Point</th><th>可触达</th><th>最近绑定</th><th>操作</th></tr></thead><tbody>
       ${rows.map(r=>`<tr class="clk" onclick="go('adetail')"><td>${r[0]} ${dot(r[2])}${fr(r[3])}</td><td>${r[1]}</td><td>—</td><td>—</td><td>0 THB</td><td>0</td><td>${r[4]}</td><td>${r[5]}</td><td>—</td></tr>`).join('')}
       </tbody></table>
-      <div class="note" style="padding-top:8px">最后一行为状态查询失败变体：图标置灰、可触达显示「—」，不默认成未绑定或未关注。操作列恒为「—」，后台无任何解绑 / 换绑 / 代绑入口。</div>
+      <div class="note" style="padding-top:8px">最后一行为渠道状态未知变体：状态库暂无明确记录或同步待确认；图标置灰、可触达显示「—」，不默认成未绑定或未关注。操作列恒为「—」，后台无任何解绑 / 换绑 / 代绑入口。</div>
     </div></div>`};
   },
   adetail(){
@@ -905,7 +952,7 @@ function finishRegister(){
   if(!S.agree){ toast('请先阅读并同意服务条款与隐私政策'); return; }
   S.regErr=false;
   S.member=true; S.opened=true;
-  if(S.lineAuthorized){ S.bound=true; S.friend=true; go('receipt'); }
+  if(S.lineAuthorized){ S.bound=true; go(needsFollowPrompt()?'result':'member'); }
   else { go('member'); }
 }
 function lookupPhoneFirst(){
@@ -927,7 +974,7 @@ function completeLineOtp(){
   const v=(el?el.value:S.otp||'').replace(/\D/g,'');
   if(v.length!==6){ toast('请输入 6 位验证码'); return; }
   S.otp=v; S.member=true; S.opened=true;
-  if(S.lineAuthorized){ S.bound=true; S.friend=true; go('receipt'); }
+  if(S.lineAuthorized){ S.bound=true; go(needsFollowPrompt()?'result':'member'); }
   else { go('member'); }
 }
 function resend(){ S.ref='W49a'; toast('已重新发送，Ref 更新为 W49a'); }
@@ -952,18 +999,17 @@ function sync(){
   if(p) S.phone=p.value.replace(/\D/g,'');
   if(o) S.otp=o.value.replace(/\D/g,'');
   if(!b) return;
-  const ok = S.sent && (o ? o.value.replace(/\D/g,'').length===6 : false) && S.agree;
+  const ok = S.sent && (o ? o.value.replace(/\D/g,'').length===6 : false);
   b.classList.toggle('off', !ok);
 }
 function submitOtp(){  if(!S.sent){ S.phErr=true; render('phone'); return; }
-  if(!S.agree){ toast('请先阅读并同意协议'); return; }
   if(S.limited){ render('elimit'); return; }
   const el=document.getElementById('otp'); const v=(el?el.value:S.otp||'').replace(/\D/g,'');
   if(v.length!==6){ S.otpFails++; S.otpErr=true; if(S.otpFails>=3){ S.limited=true; render('elimit'); return; } render('phone'); return; }
   S.member=true; S.opened=true; S.otpErr=false; S.otp=v;
   S.phoneVerified=true;
   if(S.known){
-    if(S.lineAuthorized){ S.bound=true; S.friend=true; go('receipt'); }
+    if(S.lineAuthorized){ S.bound=true; go(needsFollowPrompt()?'result':'member'); }
     else { go('member'); }
   } else { go('register'); }
 }
@@ -981,14 +1027,14 @@ function pick(el){
 function afterIdentify(){
   if(S.status!=='Active'){ render('estatus'); return; }
   if(S.bound){ go('member'); return; }
-  if(S.member){ S.bound=true; S.friend=true; S.loginWay='会员首页补绑'; go('receipt'); return; }
+  if(S.member){ S.bound=true; S.loginWay='会员首页补绑'; go(needsFollowPrompt()?'result':'member'); return; }
   go('phone');
 }
 function richMenuLinked(){
-  S.member=true; S.opened=true; S.bound=true; S.friend=true; S.known=true; go('member');
+  S.member=true; S.opened=true; S.bound=true; S.friend=true; S.friendKnown=true; S.known=true; go('member');
 }
 function richMenuUnlinked(existing){
-  S.member=false; S.opened=false; S.bound=false; S.friend=true; S.known=!!existing; S.lineAuthorized=true; go('phone');
+  S.member=false; S.opened=false; S.bound=false; S.friend=true; S.friendKnown=true; S.known=!!existing; S.lineAuthorized=true; go('phone');
 }
 function afterAuth(){
   S.lineAuthorized=true;
@@ -1022,7 +1068,7 @@ function verifySecurityCode(next){
   S.otp=code; go(next);
 }
 function completeRebind(){
-  S.bound=true; S.lineAuthorized=true; S.forceConflict=false; S.friend=false; go('rebindsuccess');
+  S.bound=true; S.lineAuthorized=true; S.forceConflict=false; S.friend=false; S.friendKnown=true; go('rebindsuccess');
 }
 function completeUnbind(){
   S.bound=false; S.lineAuthorized=false; go('unbindsuccess');
@@ -1032,7 +1078,7 @@ function completeReturn(){
   if(S.forceConflict){ go('conflict'); return; }
   if(S.status!=='Active'){ go('estatus'); return; }
   if(S.bound){ go('member'); return; }
-  if(S.member){ S.bound=true; S.friend=true; S.loginWay='会员首页补绑'; go('receipt'); return; }
+  if(S.member){ S.bound=true; S.loginWay='会员首页补绑'; go(needsFollowPrompt()?'result':'member'); return; }
   go('phone');
 }
 function toast(msg){
@@ -1056,8 +1102,8 @@ function render(v){
     ['通道配置', S.channel?'已配置':'未配置'],
     ['会员', S.member?'已登录 / 已注册':'未登录'],
     ['LINE 绑定', S.bound?'<span class="dot g"></span>已绑定':'<span class="dot n"></span>未绑定'],
-    ['LINE OA 好友状态', S.friend?'<span class="dot o"></span>已关注':'<span class="dot n"></span>未关注'],
-    ['CRM 消息可触达', (S.bound&&S.friend)?'是':'否'],
+    ['LINE OA 好友状态', !S.friendKnown?'<span class="dot n"></span>待确认':(S.friend?'<span class="dot o"></span>已关注':'<span class="dot n"></span>未关注')],
+    ['CRM 消息可触达', !S.friendKnown?'—':(isReachable()?'是':'否')],
     ['会员状态', S.status],
   ].map(r=>`<div class="st"><span>${r[0]}</span><span>${r[1]}</span></div>`).join('');
   document.querySelectorAll('.panel .btn').forEach(b=>b.classList.remove('on'));
