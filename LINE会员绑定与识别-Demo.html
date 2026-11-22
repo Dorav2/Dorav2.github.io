@@ -184,6 +184,7 @@
       <h2>状态场景</h2>
       <button class="btn" onclick="scenario('boundUnfollowed')">已绑定但未关注 OA</button>
       <button class="btn" onclick="scenario('friendUnknown')">好友状态未知 / 待确认</button>
+      <button class="btn" onclick="scenario('legacyMember')">存量会员：营销未同意（引导卡）</button>
       <h2>同意与退订</h2>
       <button class="btn" onclick="scenario('consentFlow')">营销同意与消息内退订（全链路）</button>
       <h2>异常场景</h2>
@@ -191,19 +192,6 @@
       <button class="btn" onclick="scenario('phoneConflict')">冲突：该手机号已绑定其他 LINE</button>
     </div>
     <div class="full-only">
-      <div class="scenario-label">H5 手机号</div>
-      <button class="btn" onclick="scenario('phone')">已有会员登录</button>
-      <button class="btn" onclick="scenario('phoneRegister')">新会员注册</button>
-      <div class="scenario-label">H5 使用 LINE 授权</div>
-      <button class="btn" onclick="scenario('lineExisting')">已有会员登录并绑定 LINE</button>
-      <button class="btn" onclick="scenario('lineLogin')">新会员注册并绑定 LINE</button>
-      <div class="scenario-label">LINE 内与会员绑定</div>
-      <button class="btn" onclick="scenario('memberBind')">从会员中心绑定 LINE</button>
-      <button class="btn" onclick="scenario('richMenu')">从 Rich Menu 登录或注册 <span style="display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#9aa2ab;border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle">P0 不做 · 后续支持</span></button>
-      <button class="btn" onclick="scenario('bound')">已绑定会员免登录进入</button>
-      <button class="btn" onclick="scenario('manageBinding')">管理或解除 LINE 绑定</button>
-      <button class="btn" onclick="scenario('boundUnfollowed')">已绑定但未关注 OA</button>
-      <button class="btn" onclick="scenario('friendUnknown')">好友状态未知 / 待确认</button>
       <h2>同意与退订</h2>
       <button class="btn" onclick="scenario('consentFlow')">营销同意与消息内退订（全链路）</button>
       <h2>异常场景</h2>
@@ -550,6 +538,16 @@ const EN = {
   "退订链接为一次性 token 直链（无需登录、点开即退，可在设置页重新开启）；退订与个人资料页开关写同一个同意位，任一入口退订全局生效。竞品参考：CyberBiz 同为 token 退订直链、一次退全渠道。":"The unsubscribe link is a one-time token URL (no login needed, effective on open, resubscribe anytime in Settings); it writes the same consent flag as the profile switch, so opting out anywhere applies everywhere. Reference: CyberBiz uses the same token-link pattern across all channels.",
   "查看 LINE 营销消息示例（含退订入口）":"View a sample LINE marketing message (with unsubscribe)",
   "已退订营销通知，服务通知不受影响":"Unsubscribed from marketing; service notifications unaffected",
+  "开启优惠通知":"Turn on offers notifications",
+  "开启后可及时收到积分、优惠券与会员专属优惠（基于消费与偏好推荐）。":"Get points, coupons and member-only offers in time (recommended based on your spending and preferences).",
+  "存量会员补同意引导：非阻断、可跳过，下次进入仍可在此或设置页开启（BR-17）。":"Legacy-member re-consent prompt: non-blocking, skippable; reopen anytime here or in Settings (BR-17).",
+  "已同意接收优惠与促销信息，可随时在设置页退订":"Consented to offers and promotions; unsubscribe anytime in Settings",
+  "存量会员：营销未同意（引导卡）":"Legacy member: no marketing consent (prompt card)",
+  "顾客在 LINE 内点开消息链接进入（非外部浏览器 Login with LINE）":"Customer opened a message link inside LINE (not external-browser Login with LINE)",
+  "正在识别 LINE 身份":"Identifying LINE identity",
+  "LIFF 环境已取得 LINE User ID，免登录直达会员中心":"LIFF has obtained the LINE User ID; enter Member Center without login",
+  "已绑定会员：直接进入会员中心":"Linked member: enter Member Center directly",
+  "存量会员补同意场景：进入会员中心后由「开启优惠通知」引导卡补采（BR-17 四时机之一）。":"Legacy re-consent scenario: after entering Member Center, the \"Turn on offers notifications\" prompt card collects consent (one of the four BR-17 timing points).",
   "营销同意与消息内退订（全链路）":"Marketing consent & in-message unsubscribe (full flow)",
   "已退订营销通知":"Unsubscribed from marketing",
   "服务通知（积分、订单）不受影响；可在个人资料页重新开启。":"Service notifications (points, orders) are unaffected; resubscribe anytime on the profile page.",
@@ -612,7 +610,7 @@ const P = {
 function track(k){ S.history.push(k); document.getElementById('path').innerHTML =
   '演示路径：<b>' + S.history.map(h=>P[h]||h).join(' → ') + '</b>'; }
 function back(){ S.history.pop(); const p=S.history.pop(); if(p){ render(p); } else { render('phone'); } }
-function resetAll(){ if(S.timer) clearInterval(S.timer); Object.assign(S,{entry:'web',channel:true,loginWay:'',member:false,phone:null,bound:false,friend:false,friendKnown:true,status:'Active',opened:false,otpFails:0,limited:false,branch:'Jan cafe',sent:false,phErr:false,otpErr:false,agree:false,otp:'',cd:60,timer:null,known:false,history:[],lineAuthorized:false,phoneVerified:false,authIntent:'',forceConflict:false,name:'',birthday:'',gender:'',regErr:false,marketing:false,svcNotify:true,mktNotify:false}); render('phone'); }
+function resetAll(){ if(S.timer) clearInterval(S.timer); Object.assign(S,{entry:'web',channel:true,loginWay:'',member:false,phone:null,bound:false,friend:false,friendKnown:true,status:'Active',opened:false,otpFails:0,limited:false,branch:'Jan cafe',sent:false,phErr:false,otpErr:false,agree:false,otp:'',cd:60,timer:null,known:false,history:[],lineAuthorized:false,phoneVerified:false,authIntent:'',forceConflict:false,name:'',birthday:'',gender:'',regErr:false,marketing:false,svcNotify:true,mktNotify:false,marketingPromptDone:false}); render('phone'); }
 function scenario(k){
   resetAll();
   S.history=[];
@@ -625,6 +623,7 @@ function scenario(k){
   if(k==='richMenu'){ S.entry='richMenu'; S.authIntent='login'; S.lineAuthorized=true; S.friend=true; render('liff'); return; }
   if(k==='bound'){ S.member=true; S.bound=true; S.friend=true; S.entry='lineLogin'; S.authIntent='login'; render('toline'); return; }
   if(k==='boundUnfollowed'){ S.member=true; S.opened=true; S.bound=true; S.friend=false; S.phone='0995157826'; S.entry='member'; render('member'); return; }
+  if(k==='legacyMember'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.friendKnown=true; S.mktNotify=false; S.phone='0995157826'; S.entry='legacyMsg'; S.lineAuthorized=true; render('liff'); return; }
   if(k==='friendUnknown'){ S.member=true; S.opened=true; S.bound=true; S.friend=false; S.friendKnown=false; S.channel=true; S.phone='0995157826'; S.entry='member'; render('channel'); return; }
   if(k==='consentFlow'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.mktNotify=false; S.phone='0995157826'; S.entry='member'; render('linemsg'); return; }
   if(k==='manageBinding'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.phone='0995157826'; S.entry='member'; render('channel'); return; }
@@ -685,8 +684,15 @@ function friendCard(){
   if(S.bound && !S.friendKnown) return `<div class="card">
     <div class="row" style="font-weight:600">好友状态待确认</div>
     <div class="row blk">正在同步 LINE 官方账号好友状态，请稍后再查看。</div></div>`;
+  if(S.bound && S.friendKnown && S.friend && !S.mktNotify && !S.marketingPromptDone) return `<div class="card edge">
+    <div class="row" style="font-weight:600">开启优惠通知</div>
+    <div class="row blk">开启后可及时收到积分、优惠券与会员专属优惠（基于消费与偏好推荐）。</div>
+    <div style="padding:0 12px 12px"><div class="b line" onclick="consentMarketing()">开启优惠通知</div>
+    <div class="b ghost" onclick="S.marketingPromptDone=true;render('member')">以后再说</div></div>
+    <div class="note" style="padding:0 12px 10px">存量会员补同意引导：非阻断、可跳过，下次进入仍可在此或设置页开启（BR-17）。</div></div>`;
   return '';
 }
+function consentMarketing(){ S.mktNotify=true; S.marketingPromptDone=true; toast('已同意接收优惠与促销信息，可随时在设置页退订'); render('member'); }
 function addFriend(){ render('linefriend'); }
 function confirmLineFollow(){ S.friend=true; S.friendKnown=true; render('receipt'); }
 function startLineLogin(){ S.entry='lineLogin'; S.authIntent='login'; render('toline'); }
@@ -695,8 +701,6 @@ function startLineBinding(){ S.entry='member'; S.authIntent='bind'; render('toli
 const screens = {
   h5entry(){
     return {frame:'phone', html:`${stat('会员 H5')}<div class="body center">
-      <div class="t">从 H5 登录或注册</div>
-      <span class="p">请选择要演示的会员识别结果。真实流程由 CRM 根据手机号自动判断。</span>
       <div style="margin-top:18px"><div class="b pri" onclick="startH5Variant(true)">已有会员：手机号登录</div>
       <div class="b ghost" onclick="startH5Variant(false)">新用户：手机号注册</div></div>
     </div>`};
@@ -752,25 +756,24 @@ const screens = {
     </div>`};
   },
   liff(){
+    const legacy = S.entry==='legacyMsg';
     return {frame:'phone', html:`${stat('会员中心')}<div class="body center">
+      ${legacy?`
+      <div style="width:100%;text-align:center;background:#e6f5ec;color:#0f5f2e;border:1px dashed #8fd6a6;border-radius:8px;padding:7px 10px;font-size:11.5px;font-weight:700;margin-bottom:10px">顾客在 LINE 内点开消息链接进入（非外部浏览器 Login with LINE）</div>
+      <div class="spin"></div><div class="t">正在识别 LINE 身份</div>
+      <span class="p">LIFF 环境已取得 LINE User ID，免登录直达会员中心</span>
+      <div style="margin-top:18px"><div class="b pri" onclick="richMenuLinked()">已绑定会员：直接进入会员中心</div></div>
+      <span class="note" style="display:block;margin-top:14px">存量会员补同意场景：进入会员中心后由「开启优惠通知」引导卡补采（BR-17 四时机之一）。</span>`:`
       <div style="width:100%;text-align:center;background:#eef1f4;color:#5f676e;border:1px dashed #b6bcc4;border-radius:8px;padding:7px 10px;font-size:11.5px;font-weight:700;margin-bottom:10px">本期 P0 不做 Rich Menu 入口 · 后续支持（此处仅示意未来体验）</div>
       <div class="spin"></div><div class="t">从 LINE Rich Menu 打开会员中心</div>
       <span class="p">系统先通过 LIFF 识别 LINE 身份，再判断绑定关系</span>
       <div style="margin-top:18px"><div class="b pri" onclick="richMenuLinked()">已绑定会员：免登录进入</div>
       <div class="b line" onclick="richMenuUnlinked(true)">已有会员：手机号验证并绑定</div>
       <div class="b ghost" onclick="richMenuUnlinked(false)">新用户：手机号验证并注册</div></div>
-      <span class="note" style="display:block;margin-top:14px">Rich Menu 入口无需再次点击 Login with LINE；未绑定用户继续完成手机号验证。</span>
+      <span class="note" style="display:block;margin-top:14px">Rich Menu 入口无需再次点击 Login with LINE；未绑定用户继续完成手机号验证。</span>`}
     </div>${tabs('我的')}`};
   },
   member(){
-    if(!S.opened){
-      return {frame:'phone', html:`${stat('')}<div class="body" style="position:relative">
-        <div style="opacity:.25"><div class="t" style="text-align:center">店铺名称店铺农村店店铺<br><span style="font-size:11px;font-weight:400;color:var(--text-4)">(480)-132-123</span></div></div>
-        <div class="mask"><div class="guide"><h3>开启会员，享积分与折扣</h3><p>手机号验证即可开通，已是会员可直接登录</p>
-        <div class="b pri" onclick="S.opened=true;go('phone')">立即开启</div>
-        <div class="b line" onclick="S.opened=true;go('linauth')">用 LINE 绑定已有会员</div></div></div>
-      </div>${tabsNoMember()}`};
-    }
     return {frame:'phone', html:`${stat('Jan cafe')}<div class="body">
       <div class="row" style="padding:12px 4px;cursor:pointer" onclick="go('profile')"><div style="width:38px;height:38px;border-radius:50%;background:#c98a52;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px">张</div>
       <div><div style="font-size:14px;font-weight:600">张三</div><div style="font-size:11px;color:var(--text-4)">+86 ${(S.phone||'18765789009').slice(0,3)}****${(S.phone||'18765789009').slice(-4,)}9009</div></div><span class="ar">›</span></div>
