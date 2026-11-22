@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LINE 会员绑定与识别 · 产品架构图</title>
+<style>
+  :root{--ink:#17181c;--ink2:#6b7178;--line:#e3e6ea;--bg:#eef1f4;--card:#fff;
+    --ct:#3f74c9;--ct-bg:#eaf1fb;--crm:#e0760f;--crm-bg:#fff2e6;--msg:#178a43;--msg-bg:#e6f5ec;--ext:#79828c;--ext-bg:#eef1f4;
+    --new:#1a9c4b;--new-bg:#e9f8ef;--mod:#e0760f;--mod-bg:#fff4e6;--dep:#79828c;--dep-bg:#eef1f4;}
+  *{box-sizing:border-box}
+  body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:24px 14px;line-height:1.5}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:21px;margin:0 0 3px}
+  .sub{font-size:13px;color:var(--ink2);margin-bottom:14px}
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .lg{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600}
+  .lg i{width:10px;height:10px;border-radius:50%}
+  .layer{margin-bottom:14px}
+  .lane{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+  .lane-h{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+  .lane-t{font-size:14.5px;font-weight:700}
+  .lane-d{font-size:11.5px;color:var(--ink2)}
+  .grid{display:grid;gap:10px}
+  .g-ct{grid-template-columns:repeat(3,1fr)} .g-crm{grid-template-columns:repeat(3,1fr)} .g-ext{grid-template-columns:repeat(4,1fr)}
+  .mod{border-radius:10px;padding:10px 12px;border:1px solid var(--line);background:#fff;position:relative;min-height:56px}
+  .mod .tag{display:inline-block;font-size:9.5px;font-weight:700;padding:1px 7px;border-radius:999px;margin-bottom:6px;letter-spacing:.3px}
+  .t-new{background:var(--new-bg);color:var(--new)} .t-mod{background:var(--mod-bg);color:var(--mod)} .t-dep{background:var(--dep-bg);color:var(--dep)} .t-base{background:#eceff2;color:var(--ink2)}
+  .mod h3{font-size:13px;margin:0 0 3px}
+  .mod p{font-size:11px;color:var(--ink2);margin:0}
+  .m-ct{border-top:3px solid var(--ct)} .m-crm{border-top:3px solid var(--crm)} .m-msg{border-top:3px solid var(--msg)} .m-ext{border-top:3px solid var(--ext)}
+  .full{grid-column:1/-1}
+  .bound{border:1.5px dashed var(--msg);border-radius:10px;padding:8px 10px 10px;background:#f2fbf5}
+  .bound-t{font-size:10.5px;font-weight:700;color:var(--msg);margin-bottom:8px}
+  .key{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--msg);border-radius:10px;padding:11px 14px;font-size:12.5px;color:#0f5f2e;margin-top:14px}
+  .foot{font-size:11.5px;color:var(--ink2);margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+  @media(max-width:860px){.g-ct,.g-crm,.g-ext{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.g-ct,.g-crm,.g-ext{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>LINE 会员绑定与识别 · 产品架构图</h1>
+  <div class="sub">三层能力分层；每个模块标注本期属性（新增 / 改造 / 依赖）；消息渠道为唯一对 LINE 边界。</div>
+
+  <div class="legend">
+    <span class="lg"><i style="background:var(--new)"></i>本期新增</span>
+    <span class="lg"><i style="background:var(--mod)"></i>本期改造</span>
+    <span class="lg"><i style="background:var(--dep)"></i>外部依赖/关联 PRD</span>
+    <span class="lg"><i style="background:#c7ccd2"></i>沿用现有</span>
+  </div>
+
+  <!-- Layer 1 -->
+  <div class="layer"><div class="lane">
+    <div class="lane-h"><span class="lane-t">① 用户触点层</span><span class="lane-d">顾客与商户人员进入的界面</span></div>
+    <div class="grid g-ct">
+      <div class="mod m-ct"><span class="tag t-mod">改造</span><h3>会员 H5 登录/注册页</h3><p>增加 Login with LINE 入口；协议一次采集、登录不重复</p></div>
+      <div class="mod m-ct"><span class="tag t-mod">改造</span><h3>会员中心 / 个人资料页</h3><p>Add LINE 卡片、绑定详情、解绑流程；「通知与隐私」营销开关</p></div>
+      <div class="mod m-ct"><span class="tag t-base">沿用</span><h3>POS / 扫码点餐 H5</h3><p>现有注册入口（复用同一注册链路，仅记来源）；Rich Menu 入口为后续支持</p></div>
+      <div class="mod m-ct"><span class="tag t-new">新增</span><h3>营销消息退订结果页</h3><p>token 直链免登录点开即退，可重新订阅（FR-15）</p></div>
+      <div class="mod m-ct"><span class="tag t-mod">改造</span><h3>CRM 后台（顾客列表/详情）</h3><p>LINE 绑定/消息状态图标与筛选、营销同意展示；只读无代操作</p></div>
+      <div class="mod m-ct"><span class="tag t-base">外部页面</span><h3>LINE 官方授权页</h3><p>Login with LINE 授权，不自建</p></div>
+    </div>
+  </div></div>
+
+  <!-- Layer 2 -->
+  <div class="layer"><div class="lane">
+    <div class="lane-h"><span class="lane-t">② 会员与身份业务域（CRM）</span><span class="lane-d">本需求核心交付的能力层</span></div>
+    <div class="grid g-crm">
+      <div class="mod m-crm"><span class="tag t-mod">改造</span><h3>登录/注册/绑定编排</h3><p>三入口统一编排；复用现有手机号 OTP+创建链路，仅按入口区分来源</p></div>
+      <div class="mod m-crm"><span class="tag t-base">沿用</span><h3>CRM 会员服务</h3><p>会员档案、积分、等级、状态（Active/非 Active）</p></div>
+      <div class="mod m-crm"><span class="tag t-new">新增</span><h3>LINE 身份绑定关系</h3><p>LINE User ID ↔ GPos 会员 ID 一对一；幂等写入、冲突拒绝、审计</p></div>
+      <div class="mod m-crm"><span class="tag t-new">新增</span><h3>可触达状态计算</h3><p>技术可触达=渠道有效∧已绑定∧OA好友∧未屏蔽；unknown 不默认</p></div>
+      <div class="mod m-crm"><span class="tag t-new">新增</span><h3>营销同意与退订</h3><p>目的级同意位+渠道偏好；退订 token 签发校验；双入口写同一位</p></div>
+      <div class="mod m-crm"><span class="tag t-mod">改造</span><h3>审计与埋点</h3><p>入口/授权/绑定/解绑/冲突/退订全链路留痕；不记明文 OTP</p></div>
+    </div>
+  </div></div>
+
+  <!-- Layer 3 -->
+  <div class="layer"><div class="lane">
+    <div class="lane-h"><span class="lane-t">③ 消息渠道（唯一对 LINE 边界）与外部服务</span><span class="lane-d">虚线框内为唯一对 LINE 边界；CRM 全程不直连 LINE</span></div>
+    <div class="grid g-ext">
+      <div class="mod m-msg bound full" style="border-top:3px solid var(--msg)">
+        <div class="bound-t">▲ 唯一对 LINE 边界（关联 PRD，同事负责，本期一起评审）</div>
+        <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px">
+          <div class="mod m-msg"><span class="tag t-dep">依赖</span><h3>消息渠道管理</h3><p>租户级 LINE Login/LIFF/OA 通道配置与有效状态</p></div>
+          <div class="mod m-msg"><span class="tag t-dep">依赖</span><h3>关注状态库</h3><p>webhook 落账本；无记录/待确认且有 Token 时查 friendFlag 回填（read-through）</p></div>
+          <div class="mod m-msg"><span class="tag t-dep">依赖</span><h3>消息发送模块</h3><p>营销发送五条件过滤；无退订链接强制拦截</p></div>
+        </div>
+      </div>
+      <div class="mod m-ext"><span class="tag t-dep">外部</span><h3>LINE 平台</h3><p>Login/LIFF 授权、Friendship Status、follow/unfollow Webhook、Messaging API 送达</p></div>
+      <div class="mod m-ext"><span class="tag t-dep">外部</span><h3>短信 OTP 服务</h3><p>现有频控/有效期/失败规则，本需求不新增</p></div>
+      <div class="mod m-ext"><span class="tag t-base">沿用</span><h3>登录会话服务</h3><p>现有会话体系，LINE 免登录挂接</p></div>
+      <div class="mod m-ext"><span class="tag t-base">沿用</span><h3>租户配置</h3><p>Feature Flag 分入口灰度</p></div>
+    </div>
+  </div></div>
+
+  <div class="key"><b>读图要点：</b>②层为本期核心交付（4 新增 2 改造）；①层触点与③层服务通过 ② 层编排交互，任何模块不直接调用 LINE——LINE 仅与虚线框内的消息渠道三模块交互。泳道图见 5.2.1（绑定与通知状态）与 5.2.2（同意与退订）。</div>
+
+  <div class="foot">标注口径：新增=本期新建能力；改造=现有页面/模块上叠加 LINE 能力；依赖=外部平台或并行 PRD 提供、本 PRD 消费。Rich Menu/LIFF 入口 P0 不做、按 FR-04 保留设计。</div>
+</div>
+</body>
+</html>
