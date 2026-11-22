@@ -83,12 +83,12 @@
       <div class="mod m-msg bound full" style="border-top:3px solid var(--msg)">
         <div class="bound-t">▲ 唯一对 LINE 边界（关联 PRD，同事负责，本期一起评审）</div>
         <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px">
-          <div class="mod m-msg"><span class="tag t-dep">依赖</span><h3>消息渠道管理</h3><p>租户级 LINE Login/LIFF/OA 通道配置与有效状态</p></div>
+          <div class="mod m-msg"><span class="tag t-dep">依赖</span><h3>消息渠道管理</h3><p>租户级 LINE Login/OA 通道配置与有效状态（LIFF 通道配置随 Rich Menu 后续版本）</p></div>
           <div class="mod m-msg"><span class="tag t-dep">依赖</span><h3>关注状态库</h3><p>webhook 落账本；无记录/待确认且有 Token 时查 friendFlag 回填（read-through）</p></div>
           <div class="mod m-msg"><span class="tag t-dep">依赖</span><h3>消息发送模块</h3><p>营销发送五条件过滤；无退订链接强制拦截</p></div>
         </div>
       </div>
-      <div class="mod m-ext"><span class="tag t-dep">外部</span><h3>LINE 平台</h3><p>Login/LIFF 授权、Friendship Status、follow/unfollow Webhook、Messaging API 送达</p></div>
+      <div class="mod m-ext"><span class="tag t-dep">外部</span><h3>LINE 平台</h3><p>Login 授权、Friendship Status、follow/unfollow Webhook、Messaging API 送达（LIFF 授权本期不消费）</p></div>
       <div class="mod m-ext"><span class="tag t-dep">外部</span><h3>短信 OTP 服务</h3><p>现有频控/有效期/失败规则，本需求不新增</p></div>
       <div class="mod m-ext"><span class="tag t-base">沿用</span><h3>登录会话服务</h3><p>现有会话体系，LINE 免登录挂接</p></div>
       <div class="mod m-ext"><span class="tag t-base">沿用</span><h3>租户配置</h3><p>Feature Flag 分入口灰度</p></div>
