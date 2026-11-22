@@ -179,11 +179,10 @@
     </div>
     <h2>核心场景</h2>
     <button class="btn simple-only" onclick="scenario('h5Entry')">从 H5 登录/注册</button>
-    <button class="btn simple-only" onclick="scenario('richMenu')">从 LINE 登录/注册 <span style="display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#9aa2ab;border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle">P0 不做 · 后续支持</span></button>
+    <button class="btn simple-only" onclick="scenario('richMenu')">从 LINE 登录/注册 <span style="display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#9aa2ab;border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle">P0 不做（含 LIFF）· 后续支持</span></button>
     <div class="simple-only">
       <h2>状态场景</h2>
       <button class="btn" onclick="scenario('boundUnfollowed')">已绑定但未关注 OA</button>
-      <button class="btn" onclick="scenario('friendUnknown')">好友状态未知 / 待确认</button>
       <button class="btn" onclick="scenario('legacyMember')">存量会员：营销未同意（引导卡）</button>
       <h2>同意与退订</h2>
       <button class="btn" onclick="scenario('consentFlow')">营销同意与消息内退订（全链路）</button>
@@ -245,7 +244,7 @@
       </article>
 
       <article class="flow-card wide">
-        <div class="flow-head"><span class="flow-no">03</span>LINE Rich Menu 登录/注册 <span style="display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#9aa2ab;border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle">P0 不做 · 后续支持</span></div>
+        <div class="flow-head"><span class="flow-no">03</span>LINE Rich Menu 登录/注册 <span style="display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#9aa2ab;border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle">P0 不做（含 LIFF）· 后续支持</span></div>
         <div class="flow-row">
           <div class="flow-step"><strong>点击 Rich Menu</strong><small>进入会员中心入口</small></div><span class="flow-arrow">→</span>
           <div class="flow-step"><strong>打开 LIFF</strong><small>获取 LINE User ID</small></div><span class="flow-arrow">→</span>
@@ -256,7 +255,7 @@
           <div class="flow-branch ok"><b>已绑定会员</b><div class="flow-chain"><span>免输入</span> → <span>直接进入会员中心</span></div></div>
           <div class="flow-branch new"><b>未绑定</b><div class="flow-chain"><span>手机号＋验证码</span> → <span>已有会员：建立绑定</span> / <span>新用户：填写资料并创建会员</span> → <span>进入会员中心</span></div></div>
         </div>
-        <div class="flow-note">从 Rich Menu 进入时顾客已经是 OA 好友；完成绑定后可使用 LINE 身份免登录进入。<b style="color:#5f676e">本期 P0 不做该入口，后续支持。</b></div>
+        <div class="flow-note">从 Rich Menu 进入时顾客已经是 OA 好友；完成绑定后可使用 LINE 身份免登录进入。<b style="color:#5f676e">本期 P0 不做 Rich Menu 与 LIFF（后续支持）；LINE 内点消息链接将以普通 H5 登录流程进入（手机号验证码或 LINE 授权），不做自动识别。</b></div>
       </article>
     </div>
   </section>
@@ -293,7 +292,6 @@ const EN = {
   "已绑定会员免登录进入":"Linked member: enter without login",
   "管理或解除 LINE 绑定":"Manage or unlink LINE",
   "状态场景":"Status scenarios", "已绑定但未关注 OA":"Linked but not following OA",
-  "好友状态未知 / 待确认":"Friend status unknown / Pending confirmation",
   "异常场景":"Exception scenarios", "当前状态":"Current status", "操作":"Actions",
   "路径① 手机号登录（已有会员）":"Path 1 · Phone login (existing member)",
   "路径② 手机号注册（新会员）":"Path 2 · Phone registration (new member)",
@@ -315,9 +313,9 @@ const EN = {
   "账号与渠道":"Account & channel", "LINE 授权":"LINE authorization", "授权回跳":"Authorization redirect",
   "绑定结果":"Linking result", "好友添加回执":"Friend-add confirmation", "冲突错误页":"Conflict error",
   "状态异常页":"Abnormal status", "风控上限页":"Verification limit", "通道未配置页":"Channel not configured",
-  "LIFF 识别中":"LIFF recognition", "商家后台":"Merchant admin", "后台会员详情":"Member details",
+  "商家后台":"Merchant admin", "后台会员详情":"Member details",
   "当前环境":"Current environment", "LINE 官方页面":"Official LINE page", "会员 H5 → LINE":"Member H5 → LINE",
-  "LINE → 会员 H5":"LINE → Member H5", "LINE 内 LIFF":"LIFF inside LINE", "会员 H5":"Member H5", "入口":"Entry",
+  "LINE → 会员 H5":"LINE → Member H5", "LINE 消息链接":"LINE message link", "会员 H5":"Member H5", "入口":"Entry",
   "会员首页 Add LINE":"Add LINE from Member Home", "手机号登录页":"Phone login page",
   "通道配置":"Channel setup", "已配置":"Configured", "未配置":"Not configured",
   "会员":"Member", "已登录 / 已注册":"Logged in / registered", "未登录":"Not logged in",
@@ -400,6 +398,7 @@ const EN = {
   "直接进入会员中心":"Enter Member Center directly", "未绑定":"Not linked",
   "已有会员：建立绑定":"Existing member: create link", "新用户：填写资料并创建会员":"New customer: complete profile and create member",
   "从 Rich Menu 进入时顾客已经是 OA 好友；完成绑定后可使用 LINE 身份免登录进入。":"A customer entering from Rich Menu is already an OA friend. Once linked, the LINE identity can open Member Center without another login.",
+  "本期 P0 不做 Rich Menu 与 LIFF（后续支持）；LINE 内点消息链接将以普通 H5 登录流程进入（手机号验证码或 LINE 授权），不做自动识别。":"Neither Rich Menu nor LIFF is in P0 (future support); message links opened inside LINE fall back to the normal H5 login flow (phone OTP or LINE authorization) without auto-identification.",
   "店铺名称店铺农村店店铺":"Store name", "开启会员，享积分与折扣":"Join membership for points and discounts",
   "手机号验证即可开通，已是会员可直接登录":"Verify your phone to join, or log in if already a member",
   "立即开启":"Join now", "用 LINE 绑定已有会员":"Link an existing member with LINE",
@@ -438,7 +437,7 @@ const EN = {
   "使用原 LINE 账号重新打开":"Reopen with the original LINE account",
   "原 LINE 账号说明":"Original LINE account instructions", "换绑身份验证":"Verify before relinking",
   "换绑确认":"Confirm relinking", "换绑成功":"Relinking successful", "解绑确认":"Confirm unlinking", "解绑成功":"Unlinking successful",
-  "当前页面无法直接切换 LINE 账号。请退出后，在原 LINE 账号中从 Rich Menu 或 Login with LINE 重新进入。":"This page cannot switch LINE accounts directly. Exit, then use the original LINE account to re-enter from Rich Menu or Login with LINE.",
+  "当前页面无法直接切换 LINE 账号。请退出后，在原 LINE 账号中通过 Login with LINE 重新进入。":"This page cannot switch LINE accounts directly. Exit, then re-enter with Login with LINE from the original LINE account.",
   "我知道了":"Got it", "验证会员身份":"Verify member identity", "已验证手机号":"Verified phone number",
   "发送验证码":"Send code", "确认验证码":"Confirm code", "确认更换绑定":"Confirm link replacement",
   "验证码已发送":"Verification code sent", "请先获取验证码":"Get a verification code first",
@@ -504,7 +503,7 @@ const EN = {
   "含基于消费与偏好的个性化推荐":"incl. personalized recommendations based on spending and preferences",
   "（非入会条件，可随时退订）":"(not a condition of joining; unsubscribe anytime)",
   "P0 不做 · 后续支持":"Not in P0 · Future support",
-  "本期 P0 不做 Rich Menu 入口 · 后续支持（此处仅示意未来体验）":"Rich Menu entry is not in P0 · future support (shown here only as a preview)",
+  "本期 P0 不做 Rich Menu 入口与 LIFF · 后续支持（此处仅示意未来体验）":"Rich Menu entry & LIFF are not in P0 · future support (shown here only as a preview)",
   "本期 P0 不做该入口，后续支持。":"This entry is not in P0; it will be supported later.",
   "消息通知":"Notifications",
   "服务通知（积分到账、订单状态）":"Service notifications (points, order status)",
@@ -536,18 +535,19 @@ const EN = {
   "退订营销通知":"Unsubscribe from marketing",
   "退订即时生效，服务通知（积分、订单）不受影响":"Unsubscribing takes effect immediately; service notifications (points, orders) are unaffected",
   "退订链接为一次性 token 直链（无需登录、点开即退，可在设置页重新开启）；退订与个人资料页开关写同一个同意位，任一入口退订全局生效。竞品参考：CyberBiz 同为 token 退订直链、一次退全渠道。":"The unsubscribe link is a one-time token URL (no login needed, effective on open, resubscribe anytime in Settings); it writes the same consent flag as the profile switch, so opting out anywhere applies everywhere. Reference: CyberBiz uses the same token-link pattern across all channels.",
-  "查看 LINE 营销消息示例（含退订入口）":"View a sample LINE marketing message (with unsubscribe)",
   "已退订营销通知，服务通知不受影响":"Unsubscribed from marketing; service notifications unaffected",
   "开启优惠通知":"Turn on offers notifications",
   "开启后可及时收到积分、优惠券与会员专属优惠（基于消费与偏好推荐）。":"Get points, coupons and member-only offers in time (recommended based on your spending and preferences).",
   "存量会员补同意引导：非阻断、可跳过，下次进入仍可在此或设置页开启（BR-17）。":"Legacy-member re-consent prompt: non-blocking, skippable; reopen anytime here or in Settings (BR-17).",
   "已同意接收优惠与促销信息，可随时在设置页退订":"Consented to offers and promotions; unsubscribe anytime in Settings",
   "存量会员：营销未同意（引导卡）":"Legacy member: no marketing consent (prompt card)",
-  "顾客在 LINE 内点开消息链接进入（非外部浏览器 Login with LINE）":"Customer opened a message link inside LINE (not external-browser Login with LINE)",
-  "正在识别 LINE 身份":"Identifying LINE identity",
-  "LIFF 环境已取得 LINE User ID，免登录直达会员中心":"LIFF has obtained the LINE User ID; enter Member Center without login",
-  "已绑定会员：直接进入会员中心":"Linked member: enter Member Center directly",
-  "存量会员补同意场景：进入会员中心后由「开启优惠通知」引导卡补采（BR-17 四时机之一）。":"Legacy re-consent scenario: after entering Member Center, the \"Turn on offers notifications\" prompt card collects consent (one of the four BR-17 timing points).",
+  "顾客在 LINE 内点开消息链接进入（LINE 内置浏览器打开 H5）":"Customer opened a message link inside LINE (H5 opens in LINE's in-app browser)",
+  "会员 H5 登录首屏":"Member H5 login landing",
+  "本期不使用 LIFF：H5 无法自动取得 LINE 身份，顾客按普通登录流程进入。":"No LIFF in this phase: H5 cannot obtain the LINE identity automatically; customers follow the normal login flow.",
+  "存量会员：手机号验证码登录":"Legacy member: log in with phone number + OTP",
+  "用 LINE 授权登录":"Log in with LINE authorization",
+  "已绑定存量会员登录后直达会员中心，由「开启优惠通知」引导卡补采营销同意（BR-17 四时机之一）。":"A linked legacy member goes straight to Member Center after login, where the \"Turn on offers notifications\" prompt card collects marketing consent (one of the four BR-17 timing points).",
+  "LINE 内打开链接":"Link opened inside LINE",
   "营销同意与消息内退订（全链路）":"Marketing consent & in-message unsubscribe (full flow)",
   "已退订营销通知":"Unsubscribed from marketing",
   "服务通知（积分、订单）不受影响；可在个人资料页重新开启。":"Service notifications (points, orders) are unaffected; resubscribe anytime on the profile page.",
@@ -605,7 +605,7 @@ const P = {
   member:'会员中心（我的）', profile:'个人资料', channel:'账号与渠道', lineauth:'LINE 授权', redirect:'授权回跳',
   result:'绑定结果', linefriend:'LINE 原生关注页', receipt:'好友添加回执', conflict:'冲突错误页', ephonebound:'手机号冲突错误页', originalhelp:'原 LINE 账号说明',
   rebindverify:'换绑身份验证', rebindconfirm:'换绑确认', rebindsuccess:'换绑成功', unbindverify:'解绑身份验证', unbindconfirm:'解绑确认', unbindsuccess:'解绑成功', estatus:'状态异常页',
-  elimit:'风控上限页', echanel:'通道未配置页', liff:'LIFF 识别中', admin:'商家后台', adetail:'后台会员详情'
+  elimit:'风控上限页', echanel:'通道未配置页', liff:'LINE 内打开链接', admin:'商家后台', adetail:'后台会员详情'
 };
 function track(k){ S.history.push(k); document.getElementById('path').innerHTML =
   '演示路径：<b>' + S.history.map(h=>P[h]||h).join(' → ') + '</b>'; }
@@ -623,8 +623,7 @@ function scenario(k){
   if(k==='richMenu'){ S.entry='richMenu'; S.authIntent='login'; S.lineAuthorized=true; S.friend=true; render('liff'); return; }
   if(k==='bound'){ S.member=true; S.bound=true; S.friend=true; S.entry='lineLogin'; S.authIntent='login'; render('toline'); return; }
   if(k==='boundUnfollowed'){ S.member=true; S.opened=true; S.bound=true; S.friend=false; S.phone='0995157826'; S.entry='member'; render('member'); return; }
-  if(k==='legacyMember'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.friendKnown=true; S.mktNotify=false; S.phone='0995157826'; S.entry='legacyMsg'; S.lineAuthorized=true; render('liff'); return; }
-  if(k==='friendUnknown'){ S.member=true; S.opened=true; S.bound=true; S.friend=false; S.friendKnown=false; S.channel=true; S.phone='0995157826'; S.entry='member'; render('channel'); return; }
+  if(k==='legacyMember'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.friendKnown=true; S.mktNotify=false; S.phone='0995157826'; S.entry='legacyMsg'; render('liff'); return; }
   if(k==='consentFlow'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.mktNotify=false; S.phone='0995157826'; S.entry='member'; render('linemsg'); return; }
   if(k==='manageBinding'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.phone='0995157826'; S.entry='member'; render('channel'); return; }
   if(k==='conflict'){ S.member=true; S.opened=true; S.phone='0995157826'; S.entry='member'; render('conflict'); return; }
@@ -757,14 +756,15 @@ const screens = {
   },
   liff(){
     const legacy = S.entry==='legacyMsg';
-    return {frame:'phone', html:`${stat('会员中心')}<div class="body center">
+    return {frame:'phone', html:`${stat(legacy?'会员 H5':'会员中心')}<div class="body center">
       ${legacy?`
-      <div style="width:100%;text-align:center;background:#e6f5ec;color:#0f5f2e;border:1px dashed #8fd6a6;border-radius:8px;padding:7px 10px;font-size:11.5px;font-weight:700;margin-bottom:10px">顾客在 LINE 内点开消息链接进入（非外部浏览器 Login with LINE）</div>
-      <div class="spin"></div><div class="t">正在识别 LINE 身份</div>
-      <span class="p">LIFF 环境已取得 LINE User ID，免登录直达会员中心</span>
-      <div style="margin-top:18px"><div class="b pri" onclick="richMenuLinked()">已绑定会员：直接进入会员中心</div></div>
-      <span class="note" style="display:block;margin-top:14px">存量会员补同意场景：进入会员中心后由「开启优惠通知」引导卡补采（BR-17 四时机之一）。</span>`:`
-      <div style="width:100%;text-align:center;background:#eef1f4;color:#5f676e;border:1px dashed #b6bcc4;border-radius:8px;padding:7px 10px;font-size:11.5px;font-weight:700;margin-bottom:10px">本期 P0 不做 Rich Menu 入口 · 后续支持（此处仅示意未来体验）</div>
+      <div style="width:100%;text-align:center;background:#e6f5ec;color:#0f5f2e;border:1px dashed #8fd6a6;border-radius:8px;padding:7px 10px;font-size:11.5px;font-weight:700;margin-bottom:10px">顾客在 LINE 内点开消息链接进入（LINE 内置浏览器打开 H5）</div>
+      <div class="t">会员 H5 登录首屏</div>
+      <span class="p">本期不使用 LIFF：H5 无法自动取得 LINE 身份，顾客按普通登录流程进入。</span>
+      <div style="margin-top:18px"><div class="b pri" onclick="legacyLoginEntry()">存量会员：手机号验证码登录</div>
+      <div class="b line" onclick="startLineLogin()">用 LINE 授权登录</div></div>
+      <span class="note" style="display:block;margin-top:14px">已绑定存量会员登录后直达会员中心，由「开启优惠通知」引导卡补采营销同意（BR-17 四时机之一）。</span>`:`
+      <div style="width:100%;text-align:center;background:#eef1f4;color:#5f676e;border:1px dashed #b6bcc4;border-radius:8px;padding:7px 10px;font-size:11.5px;font-weight:700;margin-bottom:10px">本期 P0 不做 Rich Menu 入口与 LIFF · 后续支持（此处仅示意未来体验）</div>
       <div class="spin"></div><div class="t">从 LINE Rich Menu 打开会员中心</div>
       <span class="p">系统先通过 LIFF 识别 LINE 身份，再判断绑定关系</span>
       <div style="margin-top:18px"><div class="b pri" onclick="richMenuLinked()">已绑定会员：免登录进入</div>
@@ -851,7 +851,6 @@ const screens = {
       <div class="row">已关联会员<span class="v">${(S.phone||'0995157826').slice(0,3)}****${(S.phone||'0995157826').slice(-4)}</span></div>
       <div class="row">绑定来源<span class="v">${S.entry==='lineLogin'?'Login with LINE':'会员首页 Add LINE'}</span></div></div>
       <div class="card"><div class="agree" style="margin:0;padding:11px 12px" onclick="S.mktNotify=!S.mktNotify;render('result')"><span class="cbx${S.mktNotify?' on':''}">${S.mktNotify?'✓':''}</span><span>同意接收优惠与促销信息<span style="color:var(--text-4)">（含基于消费与偏好的个性化推荐 · 非入会条件，可随时退订）</span></span></div></div>
-      ${S.mktNotify?`<div class="card"><div class="row" onclick="go('linemsg')"><span class="ic">◉</span>查看 LINE 营销消息示例（含退订入口）<span class="v">›</span></div></div>`:''}
       ${needsFollowPrompt()?`<div class="card edge"><div class="row" style="font-weight:600">关注门店 LINE 才能收到通知</div>
       <div class="row blk">关注后可接收订单、积分与权益提醒</div>
       <div style="padding:0 12px 12px"><div class="b line" onclick="addFriend()">前往 LINE 关注</div>
@@ -928,7 +927,7 @@ const screens = {
   originalhelp(){
     return {frame:'phone', html:`${stat('使用原 LINE 账号重新打开')}<div class="body">
       <div class="t">使用原 LINE 账号重新打开</div>
-      <span class="p">当前页面无法直接切换 LINE 账号。请退出后，在原 LINE 账号中从 Rich Menu 或 Login with LINE 重新进入。</span>
+      <span class="p">当前页面无法直接切换 LINE 账号。请退出后，在原 LINE 账号中通过 Login with LINE 重新进入。</span>
       <div class="b pri" onclick="go('member')">我知道了</div>
     </div>`};
   },
@@ -1147,6 +1146,9 @@ function unsubscribeMarketing(){ S.mktNotify=false; toast('已退订营销通知
 function richMenuLinked(){
   S.member=true; S.opened=true; S.bound=true; S.friend=true; S.friendKnown=true; S.known=true; go('member');
 }
+function legacyLoginEntry(){
+  S.known=true; go('phone');
+}
 function richMenuUnlinked(existing){
   S.member=false; S.opened=false; S.bound=false; S.friend=true; S.friendKnown=true; S.known=!!existing; S.lineAuthorized=true; go('phone');
 }
@@ -1211,8 +1213,8 @@ function render(v){
   if(sc.frame==='pc'){ stage.innerHTML=`<div class="pc">${sc.html}</div>`; }
   else { stage.innerHTML=`<div class="phone${v==='phone'?' white':''}">${sc.html}</div>`; }
   document.getElementById('state').innerHTML=[
-    ['当前环境', v==='linauth'?'<span class="dot g"></span>LINE 官方页面':(v==='toline'?'会员 H5 → LINE':(v==='redirect'?'LINE → 会员 H5':(v==='liff'?'LINE 内 LIFF':'会员 H5')))],
-    ['入口', S.entry==='lineLogin'?'Login with LINE':(S.entry==='member'?'会员首页 Add LINE':(S.entry==='richMenu'?'LINE Rich Menu':(S.entry==='web'?'手机号登录页':'—')))],
+    ['当前环境', v==='linauth'?'<span class="dot g"></span>LINE 官方页面':(v==='toline'?'会员 H5 → LINE':(v==='redirect'?'LINE → 会员 H5':(v==='liff'?'LINE 内打开链接':'会员 H5')))],
+    ['入口', S.entry==='lineLogin'?'Login with LINE':(S.entry==='member'?'会员首页 Add LINE':(S.entry==='richMenu'?'LINE Rich Menu':(S.entry==='legacyMsg'?'LINE 消息链接':(S.entry==='web'?'手机号登录页':'—'))))],
     ['通道配置', S.channel?'已配置':'未配置'],
     ['会员', S.member?'已登录 / 已注册':'未登录'],
     ['LINE 绑定', S.bound?'<span class="dot g"></span>已绑定':'<span class="dot n"></span>未绑定'],
