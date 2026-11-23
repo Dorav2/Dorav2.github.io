@@ -272,7 +272,7 @@ const S = {
   entry: '', channel: true, loginWay: '', member: false, phone: null,
   bound: false, friend: false, friendKnown: true, status: 'Active', opened: false,
   otpFails: 0, limited: false, ref: 'W48i', branch: 'Jan cafe', known: false, sent: false, phErr: false, otpErr: false, agree: false, otp: '', cd: 60, timer: null, history: [], lineAuthorized:false, phoneVerified:false, authIntent:'', forceConflict:false,
-  name:'', birthday:'', gender:'', regErr:false, marketing:false, svcNotify:true, mktNotify:false
+  name:'', birthday:'', gender:'', regErr:false, marketing:false, svcNotify:true, mktNotify:false, mktStatus:'never'
 };
 const UI = { lang:'zh' };
 const EN = {
@@ -322,7 +322,7 @@ const EN = {
   "LINE 绑定":"LINE linking", "已绑定":"Linked", "未绑定":"Not linked",
   "OA 好友":"OA friend", "已关注":"Following", "未关注":"Not following", "待确认":"Pending",
   "LINE OA 好友状态":"LINE OA friend status", "CRM 消息可触达":"CRM message reachable",
-  "LINE 通知状态":"LINE notification status (follows OA friend status)", 
+  "营销通知订阅":"Marketing notification subscription", "已订阅":"Subscribed", "未订阅":"Not subscribed", "已退订":"Unsubscribed", 
   "可触达":"Reachable", "是":"Yes", "否":"No", "会员状态":"Member status",
   "品牌页":"Brand", "点单":"Order", "订单":"Orders", "我的":"Me", "门店":"Store",
   "‹ 返回":"‹ Back", "黑金会员":"Black Gold Member",
@@ -609,7 +609,7 @@ const P = {
 function track(k){ S.history.push(k); document.getElementById('path').innerHTML =
   '演示路径：<b>' + S.history.map(h=>P[h]||h).join(' → ') + '</b>'; }
 function back(){ S.history.pop(); const p=S.history.pop(); if(p){ render(p); } else { render('phone'); } }
-function resetAll(){ if(S.timer) clearInterval(S.timer); Object.assign(S,{entry:'web',channel:true,loginWay:'',member:false,phone:null,bound:false,friend:false,friendKnown:true,status:'Active',opened:false,otpFails:0,limited:false,branch:'Jan cafe',sent:false,phErr:false,otpErr:false,agree:false,otp:'',cd:60,timer:null,known:false,history:[],lineAuthorized:false,phoneVerified:false,authIntent:'',forceConflict:false,name:'',birthday:'',gender:'',regErr:false,marketing:false,svcNotify:true,mktNotify:false,marketingPromptDone:false}); render('phone'); }
+function resetAll(){ if(S.timer) clearInterval(S.timer); Object.assign(S,{entry:'web',channel:true,loginWay:'',member:false,phone:null,bound:false,friend:false,friendKnown:true,status:'Active',opened:false,otpFails:0,limited:false,branch:'Jan cafe',sent:false,phErr:false,otpErr:false,agree:false,otp:'',cd:60,timer:null,known:false,history:[],lineAuthorized:false,phoneVerified:false,authIntent:'',forceConflict:false,name:'',birthday:'',gender:'',regErr:false,marketing:false,svcNotify:true,mktNotify:false,mktStatus:'never',marketingPromptDone:false}); render('phone'); }
 function scenario(k){
   resetAll();
   S.history=[];
@@ -623,7 +623,7 @@ function scenario(k){
   if(k==='bound'){ S.member=true; S.bound=true; S.friend=true; S.entry='lineLogin'; S.authIntent='login'; render('toline'); return; }
   if(k==='boundUnfollowed'){ S.member=true; S.opened=true; S.bound=true; S.friend=false; S.phone='0995157826'; S.entry='member'; render('member'); return; }
   if(k==='legacyMember'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.friendKnown=true; S.mktNotify=false; S.phone='0995157826'; S.entry='legacyMsg'; render('liff'); return; }
-  if(k==='consentFlow'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.mktNotify=false; S.phone='0995157826'; S.entry='member'; render('linemsg'); return; }
+  if(k==='consentFlow'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.mktNotify=false; S.mktStatus='unsubscribed'; S.phone='0995157826'; S.entry='member'; render('linemsg'); return; }
   if(k==='manageBinding'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.phone='0995157826'; S.entry='member'; render('channel'); return; }
   if(k==='conflict'){ S.member=true; S.opened=true; S.phone='0995157826'; S.entry='member'; render('conflict'); return; }
   if(k==='phoneConflict'){ S.member=true; S.opened=true; S.phone='0995157826'; S.entry='member'; render('ephonebound'); return; }
@@ -688,7 +688,12 @@ function friendCard(){
     <div class="b ghost" style="margin:0" onclick="S.marketingPromptDone=true;render('member')">以后再说</div></div></div>`;
   return '';
 }
-function consentMarketing(){ S.mktNotify=true; S.marketingPromptDone=true; toast('已订阅营销通知，可随时在设置页退订'); render('member'); }
+function setMarketingSubscribe(on){
+  // on=true（任何起点）→ subscribed；on=false → 仅当前为 subscribed 时置 unsubscribed，never 保持 never
+  S.mktNotify=on;
+  S.mktStatus = on ? 'subscribed' : (S.mktStatus==='subscribed' ? 'unsubscribed' : S.mktStatus);
+}
+function consentMarketing(){ setMarketingSubscribe(true); S.marketingPromptDone=true; toast('已订阅营销通知，可随时在设置页退订'); render('member'); }
 function addFriend(){ render('linefriend'); }
 function confirmLineFollow(){ S.friend=true; S.friendKnown=true; render('receipt'); }
 function startLineLogin(){ S.entry='lineLogin'; S.authIntent='login'; render('toline'); }
@@ -745,7 +750,7 @@ const screens = {
       <div class="inwrap"><label class="field-label">出生日期（年 / 月 / 日）<span class="required">*</span></label><input class="in" id="bd" type="date" value="${S.birthday}" aria-label="出生日期（年、月、日）" onchange="syncRegister()"></div>
       ${S.regErr?'<div class="err">请完整填写姓名、手机号、性别和出生日期</div>':''}
       <div class="agree" onclick="S.agree=!S.agree;render('register')"><span class="cbx${S.agree?' on':''}">${S.agree?'✓':''}</span><span>我同意<a>《服务条款》</a>，并已知悉<a>《隐私政策》</a></span></div>
-      <div class="agree" onclick="S.mktNotify=!S.mktNotify;render('register')"><span class="cbx${S.mktNotify?' on':''}">${S.mktNotify?'✓':''}</span><span>订阅营销通知（优惠与促销信息）<span style="color:var(--text-4)">（含基于消费与偏好的个性化推荐 · 非入会条件，可随时退订）</span></span></div>
+      <div class="agree" onclick="setMarketingSubscribe(!S.mktNotify);render('register')"><span class="cbx${S.mktNotify?' on':''}">${S.mktNotify?'✓':''}</span><span>订阅营销通知（优惠与促销信息）<span style="color:var(--text-4)">（含基于消费与偏好的个性化推荐 · 非入会条件，可随时退订）</span></span></div>
       <div class="inwrap"><div class="b pri" onclick="finishRegister()">提交注册资料</div></div>
       <span class="note">入会门店由注册二维码中的门店参数自动记录，顾客无需填写；通过 LINE 登录的新用户，资料填写完成后再进行 OTP。</span>
       <div class="chips"><span class="chip" onclick="go('phone')">‹ 演示：回登录页</span></div>
@@ -791,7 +796,7 @@ const screens = {
       <span class="note" style="display:block;padding:0 4px 12px">资料仅供查看，如需修改联系商家。</span>
       <div class="card">
         <div class="row" style="font-weight:600">通知与隐私</div>
-        <div class="agree" style="margin:0;padding:9px 12px" onclick="S.mktNotify=!S.mktNotify;render('profile')"><span class="cbx${S.mktNotify?' on':''}">${S.mktNotify?'✓':''}</span><span>营销通知订阅<span style="color:var(--text-4)">· 非入会条件，可随时退订</span></span></div>
+        <div class="agree" style="margin:0;padding:9px 12px" onclick="setMarketingSubscribe(!S.mktNotify);render('profile')"><span class="cbx${S.mktNotify?' on':''}">${S.mktNotify?'✓':''}</span><span>营销通知订阅<span style="color:var(--text-4)">· 非入会条件，可随时退订</span></span></div>
         <div class="row"><span class="ic">⛨</span>服务通知（积分、订单）<span class="v">${S.friend?'已通过 LINE 送达':'需先关注 LINE'}</span></div>
         <div class="row" onclick="toast('查看《服务条款》与《隐私政策》')"><span class="ic">≡</span>隐私与条款<span class="v">›</span></div>
       </div>
@@ -803,7 +808,7 @@ const screens = {
       <div class="card">
         <div class="row">绑定状态<span class="v">${S.bound?badge('已绑定','on'):badge('未绑定','na')}</span></div>
         <div class="row">LINE OA 好友状态<span class="v">${friendStatusBadge()}</span></div>
-        <div class="row">LINE 通知状态<span class="v">${friendStatusBadge()}</span></div>
+        <div class="row">营销通知订阅<span class="v">${S.mktStatus==='subscribed'?badge('已订阅','on'):(S.mktStatus==='unsubscribed'?badge('已退订','off'):badge('未订阅','na'))}</span></div>
       </div>
       ${needsFollowPrompt()?`<div class="card edgeG"><div class="row" style="font-weight:600;color:#0b7d3a">关注商家 LINE 官方账号</div><div class="row blk">当前 LINE 已绑定会员，但尚未关注官方账号。关注后可接收积分、订单及会员权益通知。</div><div style="padding:0 12px 12px"><div class="b line" onclick="addFriend()">前往 LINE 关注</div></div></div>`:''}
       ${S.bound&&!S.friendKnown?`<div class="card"><div class="row" style="font-weight:600">好友状态待确认</div><div class="row blk">正在同步 LINE 官方账号好友状态，请稍后再查看。</div></div>`:''}
@@ -847,7 +852,7 @@ const screens = {
       <div class="card" style="border:1px solid #8cc5a0"><div class="row" style="color:var(--success-5);font-weight:600">绑定成功</div>
       <div class="row">已关联会员<span class="v">${(S.phone||'0995157826').slice(0,3)}****${(S.phone||'0995157826').slice(-4)}</span></div>
       <div class="row">绑定来源<span class="v">${S.entry==='lineLogin'?'Login with LINE':'会员首页 Add LINE'}</span></div></div>
-      <div class="card"><div class="agree" style="margin:0;padding:11px 12px" onclick="S.mktNotify=!S.mktNotify;render('result')"><span class="cbx${S.mktNotify?' on':''}">${S.mktNotify?'✓':''}</span><span>订阅营销通知（优惠与促销信息）<span style="color:var(--text-4)">（含基于消费与偏好的个性化推荐 · 非入会条件，可随时退订）</span></span></div></div>
+      <div class="card"><div class="agree" style="margin:0;padding:11px 12px" onclick="setMarketingSubscribe(!S.mktNotify);render('result')"><span class="cbx${S.mktNotify?' on':''}">${S.mktNotify?'✓':''}</span><span>订阅营销通知（优惠与促销信息）<span style="color:var(--text-4)">（含基于消费与偏好的个性化推荐 · 非入会条件，可随时退订）</span></span></div></div>
       ${needsFollowPrompt()?`<div class="card edge"><div class="row" style="font-weight:600">关注门店 LINE 才能收到通知</div>
       <div class="row blk">关注后可接收订单、积分与权益提醒</div>
       <div style="padding:0 12px 12px"><div class="b line" onclick="addFriend()">前往 LINE 关注</div>
@@ -893,7 +898,7 @@ const screens = {
         <div style="font-size:26px;color:var(--success-5);margin-bottom:6px">✓</div>
         <div style="font-size:14px;font-weight:700;margin-bottom:4px">已退订营销通知</div>
         <div style="font-size:11.5px;color:var(--text-4);margin-bottom:10px">服务通知（积分、订单）不受影响；可在个人资料页重新开启。</div>
-        <div style="display:flex;gap:8px"><div class="b line" style="margin:0" onclick="S.mktNotify=true;render('linemsg')">重新订阅</div>
+        <div style="display:flex;gap:8px"><div class="b line" style="margin:0" onclick="setMarketingSubscribe(true);render('linemsg')">重新订阅</div>
         <div class="b ghost" style="margin:0" onclick="go('profile')">前往设置页</div></div>
       </div>`}
       <span class="note" style="display:block;padding:8px 4px 0">全链路：注册/绑定时单独勾选营销通知订阅 → 收到营销消息（底部恒带退订入口）→ 点一次性 token 直链退订、即时生效、可重新订阅；退订与个人资料页开关写同一个订阅状态，任一入口退订全局生效。竞品参考：CyberBiz 同为 token 退订直链、一次退全渠道。</span>
@@ -1139,7 +1144,7 @@ function afterIdentify(){
   if(S.member){ S.bound=true; S.loginWay='会员首页补绑'; go(needsFollowPrompt()?'result':'member'); return; }
   go('phone');
 }
-function unsubscribeMarketing(){ S.mktNotify=false; toast('已退订营销通知，服务通知不受影响'); go('linemsg'); }
+function unsubscribeMarketing(){ setMarketingSubscribe(false); toast('已退订营销通知，服务通知不受影响'); go('linemsg'); }
 
 function richMenuLinked(){
   S.member=true; S.opened=true; S.bound=true; S.friend=true; S.friendKnown=true; S.known=true; go('member');
@@ -1218,7 +1223,7 @@ function render(v){
     ['LINE 绑定', S.bound?'<span class="dot g"></span>已绑定':'<span class="dot n"></span>未绑定'],
     ['LINE OA 好友状态', !S.friendKnown?'<span class="dot n"></span>待确认':(S.friend?'<span class="dot o"></span>已关注':'<span class="dot n"></span>未关注')],
     ['CRM 消息可触达', !S.friendKnown?'—':(isReachable()?'是':'否')],
-    ['营销通知订阅', S.mktNotify?'已同意':'未同意'],
+    ['营销通知订阅', S.mktStatus==='subscribed'?'已订阅':(S.mktStatus==='unsubscribed'?'已退订':'未订阅')],
     ['会员状态', S.status],
   ].map(r=>`<div class="st"><span>${r[0]}</span><span>${r[1]}</span></div>`).join('');
   document.querySelectorAll('.panel .btn').forEach(b=>b.classList.remove('on'));
