@@ -185,14 +185,14 @@
       <button class="btn" onclick="scenario('boundUnfollowed')">已绑定但未关注 OA</button>
       <button class="btn" onclick="scenario('legacyMember')">存量会员：营销通知未订阅（引导卡）</button>
       <h2>同意与退订</h2>
-      <button class="btn" onclick="scenario('consentFlow')">营销通知订阅与消息内退订（全链路）</button>
+      <button class="btn" onclick="scenario('consentFlow')">营销通知订阅与退订（会员中心入口）</button>
       <h2>异常场景</h2>
       <button class="btn" onclick="scenario('conflict')">冲突：该 LINE 已绑定其他会员</button>
       <button class="btn" onclick="scenario('phoneConflict')">冲突：该手机号已绑定其他 LINE</button>
     </div>
     <div class="full-only">
       <h2>同意与退订</h2>
-      <button class="btn" onclick="scenario('consentFlow')">营销通知订阅与消息内退订（全链路）</button>
+      <button class="btn" onclick="scenario('consentFlow')">营销通知订阅与退订（会员中心入口）</button>
       <h2>异常场景</h2>
       <button class="btn" onclick="scenario('conflict')">冲突：该 LINE 已绑定其他会员</button>
       <button class="btn" onclick="scenario('phoneConflict')">冲突：该手机号已绑定其他 LINE</button>
@@ -532,10 +532,8 @@ const EN = {
   "会员专属：周三咖啡日 8 折":"Members only: 20% off Coffee Wednesdays",
   "凭会员卡享 Decaf 拿铁 8 折，本周三有效。":"Show your member card for 20% off a decaf latte, valid this Wednesday.",
   "退订营销通知":"Unsubscribe from marketing",
-  "退订即时生效，服务通知（积分、订单）不受影响":"Unsubscribing takes effect immediately; service notifications (points, orders) are unaffected",
-  "退订链接为一次性 token 直链（无需登录、点开即退，可在设置页重新开启）；退订与个人资料页开关写同一个同意位，任一入口退订全局生效。竞品参考：CyberBiz 同为 token 退订直链、一次退全渠道。":"The unsubscribe link is a one-time token URL (no login needed, effective on open, resubscribe anytime in Settings); it writes the same consent flag as the profile switch, so opting out anywhere applies everywhere. Reference: CyberBiz uses the same token-link pattern across all channels.",
-  "已退订营销通知，服务通知不受影响":"Unsubscribed from marketing; service notifications unaffected",
-  "订阅营销通知":"Subscribe to marketing notifications",
+    "退订链接为一次性 token 直链（无需登录、点开即退，可在设置页重新开启）；退订与个人资料页开关写同一个同意位，任一入口退订全局生效。竞品参考：CyberBiz 同为 token 退订直链、一次退全渠道。":"The unsubscribe link is a one-time token URL (no login needed, effective on open, resubscribe anytime in Settings); it writes the same consent flag as the profile switch, so opting out anywhere applies everywhere. Reference: CyberBiz uses the same token-link pattern across all channels.",
+    "订阅营销通知":"Subscribe to marketing notifications",
   "开启后可及时收到积分、优惠券与会员专属优惠（基于消费与偏好推荐）。":"Get points, coupons and member-only offers in time (recommended based on your spending and preferences).",
   "存量会员补同意引导：非阻断、可跳过，下次进入仍可在此或设置页开启（BR-17）。":"Legacy-member re-consent prompt: non-blocking, skippable; reopen anytime here or in Settings (BR-17).",
   "已订阅营销通知，可随时在设置页退订":"Subscribed to marketing notifications; unsubscribe anytime in Settings",
@@ -547,12 +545,13 @@ const EN = {
   "用 LINE 授权登录":"Log in with LINE authorization",
   "已绑定存量会员登录后直达会员中心，由「订阅营销通知」引导卡补采营销通知订阅（BR-17 四时机之一）。":"A linked legacy member goes straight to Member Center after login, where the \"Subscribe to marketing notifications\" prompt card collects the marketing subscription (one of the four BR-17 timing points).",
   "LINE 内打开链接":"Link opened inside LINE",
-  "营销通知订阅与消息内退订（全链路）":"Marketing notification subscription & in-message unsubscribe (full flow)",
-  "已退订营销通知":"Unsubscribed from marketing",
-  "服务通知（积分、订单）不受影响；可在个人资料页重新开启。":"Service notifications (points, orders) are unaffected; resubscribe anytime on the profile page.",
-  "重新订阅":"Resubscribe",
-  "前往设置页":"Go to settings",
-  "订阅":"Subscribe",
+  "示意：LINE 原生聊天界面（消息由商家经 OA 发送）。本期消息内不带退订链接，退订入口在会员中心（个人资料页开关 / 绑定详情页 / 引导卡）。":"Mock-up of LINE's native chat (message sent by the merchant via OA). In this phase messages carry no unsubscribe link; unsubscribe lives in Member Center (profile switch / binding detail / prompt card).",
+  "本期消息内不含退订链接（后续版本提供 token 退订直链）":"No unsubscribe link in messages this phase (one-time token link in a future version)",
+  "前往个人资料页退订":"Go to profile to unsubscribe",
+  "本期链路：注册/绑定时单独勾选营销通知订阅 → 收到营销消息 → 如需退订在会员中心完成（个人资料页「通知与隐私」开关、绑定详情页状态行、存量引导卡），退订即时生效、可重新订阅。消息内退订直链（CyberBiz 式一次性 token）为后续版本设计，见 FR-15 保留说明。":"This phase: opt in at registration/binding → receive marketing messages → unsubscribe in Member Center (profile switch, binding-detail status row, or legacy prompt card); takes effect immediately and can be resubscribed. The in-message one-time token link (CyberBiz pattern) is reserved for a future version (FR-15).",
+  "营销通知订阅与退订（会员中心入口）":"Marketing notification subscription & unsubscribe (Member Center entries)",
+    "服务通知（积分、订单）不受影响；可在个人资料页重新开启。":"Service notifications (points, orders) are unaffected; resubscribe anytime on the profile page.",
+      "订阅":"Subscribe",
   "营销消息":"Marketing msg",
   "退订":"Unsubscribe",
   "全链路：注册/绑定时单独勾选营销通知订阅 → 收到营销消息（底部恒带退订入口）→ 点一次性 token 直链退订、即时生效、可重新订阅；退订与个人资料页开关写同一个订阅状态，任一入口退订全局生效。竞品参考：CyberBiz 同为 token 退订直链、一次退全渠道。":"Full flow: opt in at registration/binding → receive marketing messages (always with an unsubscribe link) → tap the one-time token link to unsubscribe instantly; resubscribe anytime. The unsubscribe writes the same subscription flag as the profile switch, so opting out anywhere applies everywhere. Reference: CyberBiz uses the same token-link pattern across all channels.",
@@ -623,7 +622,7 @@ function scenario(k){
   if(k==='bound'){ S.member=true; S.bound=true; S.friend=true; S.entry='lineLogin'; S.authIntent='login'; render('toline'); return; }
   if(k==='boundUnfollowed'){ S.member=true; S.opened=true; S.bound=true; S.friend=false; S.phone='0995157826'; S.entry='member'; render('member'); return; }
   if(k==='legacyMember'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.friendKnown=true; S.mktNotify=false; S.phone='0995157826'; S.entry='legacyMsg'; render('liff'); return; }
-  if(k==='consentFlow'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.mktNotify=false; S.mktStatus='unsubscribed'; S.phone='0995157826'; S.entry='member'; render('linemsg'); return; }
+  if(k==='consentFlow'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.mktNotify=false; S.mktStatus='unsubscribed'; S.phone='0995157826'; S.entry='member'; render('member'); return; }
   if(k==='manageBinding'){ S.member=true; S.opened=true; S.bound=true; S.friend=true; S.phone='0995157826'; S.entry='member'; render('channel'); return; }
   if(k==='conflict'){ S.member=true; S.opened=true; S.phone='0995157826'; S.entry='member'; render('conflict'); return; }
   if(k==='phoneConflict'){ S.member=true; S.opened=true; S.phone='0995157826'; S.entry='member'; render('ephonebound'); return; }
@@ -874,34 +873,26 @@ const screens = {
     const step = (n,label,on,fn)=>`<div onclick="${fn}" style="flex:1;text-align:center;font-size:10.5px;padding:6px 4px;border-radius:8px;cursor:pointer;${on?'background:var(--primary-7);color:var(--primary-6);font-weight:700':'background:#f2f4f6;color:var(--ink2)'}">${n}·${label}</div>`;
     return {frame:'phone', html:`${stat('LINE · Jan cafe')}<div class="body">
       <div style="display:flex;gap:6px;align-items:center;margin:2px 0 10px;color:var(--ink3);font-size:12px">
-        ${step(1,'订阅',S.mktNotify,"S.mktNotify=true;render('linemsg')")}
+        ${step(1,'订阅',S.mktNotify,"setMarketingSubscribe(true);render('linemsg')")}
         <span>→</span>
         ${step(2,'营销消息',S.mktNotify,"render('linemsg')")}
         <span>→</span>
-        ${step(3,'退订',!S.mktNotify,"unsubscribeMarketing()")}
+        ${step(3,'会员中心退订',!S.mktNotify,"go('profile')")}
       </div>
-      <div style="background:#eef1f4;color:#5f676e;border:1px dashed #b6bcc4;border-radius:8px;padding:6px 10px;font-size:10.5px;font-weight:600;margin:2px 0 8px">示意：LINE 原生聊天界面（消息由商家经 OA 发送）；点退订链接后在 LINE 内置浏览器打开我们的 H5 完成退订。</div>
+      <div style="background:#eef1f4;color:#5f676e;border:1px dashed #b6bcc4;border-radius:8px;padding:6px 10px;font-size:10.5px;font-weight:600;margin:2px 0 8px">示意：LINE 原生聊天界面（消息由商家经 OA 发送）。本期消息内不带退订链接，退订入口在会员中心（个人资料页开关 / 绑定详情页 / 引导卡）。</div>
       <div style="text-align:center;font-size:10px;color:var(--ink3);padding:2px 0 8px">今天 12:03</div>
-      ${S.mktNotify?`
       <div style="display:flex;gap:8px;margin-bottom:10px">
         <div style="width:30px;height:30px;border-radius:8px;background:#06c755;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">J</div>
         <div style="max-width:78%">
           <div style="background:#fff;border-radius:2px 12px 12px 12px;padding:10px 12px;font-size:12.5px;box-shadow:0 1px 1px rgba(0,0,0,.04)">
             <div style="font-weight:600;margin-bottom:4px">☕ 会员专属：周三咖啡日 8 折</div>
             <div style="color:var(--text-4)">凭会员卡享 Decaf 拿铁 8 折，本周三有效。</div>
-            <div style="margin-top:8px;padding-top:8px;border-top:1px solid #eef0f2;text-align:center"><span style="color:#5b8def;font-size:11.5px;cursor:pointer" onclick="unsubscribeMarketing()">⌄ 退订营销通知</span></div>
           </div>
-          <div style="font-size:10px;color:var(--ink3);margin:4px 0 0 4px">退订即时生效，服务通知（积分、订单）不受影响</div>
+          <div style="font-size:10px;color:var(--ink3);margin:4px 0 0 4px">本期消息内不含退订链接（后续版本提供 token 退订直链）</div>
         </div>
-      </div>`:`
-      <div class="card" style="border:1px solid var(--line-green);background:var(--success-1);text-align:center;padding:16px 12px">
-        <div style="font-size:26px;color:var(--success-5);margin-bottom:6px">✓</div>
-        <div style="font-size:14px;font-weight:700;margin-bottom:4px">已退订营销通知</div>
-        <div style="font-size:11.5px;color:var(--text-4);margin-bottom:10px">服务通知（积分、订单）不受影响；可在个人资料页重新开启。</div>
-        <div style="display:flex;gap:8px"><div class="b line" style="margin:0" onclick="setMarketingSubscribe(true);render('linemsg')">重新订阅</div>
-        <div class="b ghost" style="margin:0" onclick="go('profile')">前往设置页</div></div>
-      </div>`}
-      <span class="note" style="display:block;padding:8px 4px 0">全链路：注册/绑定时单独勾选营销通知订阅 → 收到营销消息（底部恒带退订入口）→ 点一次性 token 直链退订、即时生效、可重新订阅；退订与个人资料页开关写同一个订阅状态，任一入口退订全局生效。竞品参考：CyberBiz 同为 token 退订直链、一次退全渠道。</span>
+      </div>
+      <span class="note" style="display:block;padding:8px 4px 0">本期链路：注册/绑定时单独勾选营销通知订阅 → 收到营销消息 → 如需退订在会员中心完成（个人资料页「通知与隐私」开关、绑定详情页状态行、存量引导卡），退订即时生效、可重新订阅。消息内退订直链（CyberBiz 式一次性 token）为后续版本设计，见 FR-15 保留说明。</span>
+      <div style="margin-top:10px"><div class="b pri" onclick="go('profile')">前往个人资料页退订</div></div>
     </div>`};
   },
   receipt(){
@@ -1144,7 +1135,6 @@ function afterIdentify(){
   if(S.member){ S.bound=true; S.loginWay='会员首页补绑'; go(needsFollowPrompt()?'result':'member'); return; }
   go('phone');
 }
-function unsubscribeMarketing(){ setMarketingSubscribe(false); toast('已退订营销通知，服务通知不受影响'); go('linemsg'); }
 
 function richMenuLinked(){
   S.member=true; S.opened=true; S.bound=true; S.friend=true; S.friendKnown=true; S.known=true; go('member');
