@@ -3845,6 +3845,7 @@ html&gt;body{padding:0}&lt;/style&gt;
           menu.style.left = &#x27;&#x27;;
           menu.style.top = &#x27;&#x27;;
           menu.style.width = &#x27;&#x27;;
+          menu.style.maxHeight = &#x27;&#x27;;
           control.querySelector(&#x27;.gpos-select-trigger&#x27;).setAttribute(&#x27;aria-expanded&#x27;, &#x27;false&#x27;);
         });
       };
@@ -3929,15 +3930,23 @@ html&gt;body{padding:0}&lt;/style&gt;
             const mw = menu.offsetWidth;
             const menuH = menu.offsetHeight;
             const spaceBelow = window.innerHeight - tr.bottom;
-            const openUpward = spaceBelow < Math.min(menuH, 200) &amp;&amp; tr.top > 240;
+            const spaceAbove = tr.top;
+            const openUpward = spaceBelow < 120 &amp;&amp; spaceAbove > spaceBelow + 200;
             menu.style.left = Math.max(8, Math.min(tr.left, window.innerWidth - mw - 8)) + &#x27;px&#x27;;
-            menu.style.top = (openUpward ? Math.max(8, tr.top - menuH - 5) : tr.bottom + 5) + &#x27;px&#x27;;
+            if (openUpward) {
+              menu.style.top = Math.max(8, tr.top - menuH - 5) + &#x27;px&#x27;;
+            } else {
+              const maxH = Math.max(140, window.innerHeight - tr.bottom - 16);
+              menu.style.top = (tr.bottom + 5) + &#x27;px&#x27;;
+              if (menuH > maxH) menu.style.maxHeight = maxH + &#x27;px&#x27;;
+            }
           } else {
             menu.hidden = true;
             menu.classList.remove(&#x27;menu-fixed&#x27;);
             menu.style.left = &#x27;&#x27;;
             menu.style.top = &#x27;&#x27;;
             menu.style.width = &#x27;&#x27;;
+          menu.style.maxHeight = &#x27;&#x27;;
           }
           trigger.setAttribute(&#x27;aria-expanded&#x27;, String(open));
           return;
@@ -3961,6 +3970,7 @@ html&gt;body{padding:0}&lt;/style&gt;
                 menu.style.left = &#x27;&#x27;;
                 menu.style.top = &#x27;&#x27;;
                 menu.style.width = &#x27;&#x27;;
+          menu.style.maxHeight = &#x27;&#x27;;
                 control.querySelector(&#x27;.gpos-select-trigger&#x27;)?.setAttribute(&#x27;aria-expanded&#x27;, &#x27;false&#x27;);
               }
             });
