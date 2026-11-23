@@ -322,7 +322,7 @@ const EN = {
   "LINE 绑定":"LINE linking", "已绑定":"Linked", "未绑定":"Not linked",
   "OA 好友":"OA friend", "已关注":"Following", "未关注":"Not following", "待确认":"Pending",
   "LINE OA 好友状态":"LINE OA friend status", "CRM 消息可触达":"CRM message reachable",
-  "LINE 通知状态":"LINE notification status", "可接收":"Available", "暂不可接收":"Unavailable",
+  "LINE 通知状态":"LINE notification status (follows OA friend status)", 
   "可触达":"Reachable", "是":"Yes", "否":"No", "会员状态":"Member status",
   "品牌页":"Brand", "点单":"Order", "订单":"Orders", "我的":"Me", "门店":"Store",
   "‹ 返回":"‹ Back", "黑金会员":"Black Gold Member",
@@ -803,7 +803,7 @@ const screens = {
       <div class="card">
         <div class="row">绑定状态<span class="v">${S.bound?badge('已绑定','on'):badge('未绑定','na')}</span></div>
         <div class="row">LINE OA 好友状态<span class="v">${friendStatusBadge()}</span></div>
-        <div class="row">LINE 通知状态<span class="v">${!S.friendKnown?badge('待确认','na'):(isReachable()?badge('可接收','on'):badge('暂不可接收','off'))}</span></div>
+        <div class="row">LINE 通知状态<span class="v">${friendStatusBadge()}</span></div>
       </div>
       ${needsFollowPrompt()?`<div class="card edgeG"><div class="row" style="font-weight:600;color:#0b7d3a">关注商家 LINE 官方账号</div><div class="row blk">当前 LINE 已绑定会员，但尚未关注官方账号。关注后可接收积分、订单及会员权益通知。</div><div style="padding:0 12px 12px"><div class="b line" onclick="addFriend()">前往 LINE 关注</div></div></div>`:''}
       ${S.bound&&!S.friendKnown?`<div class="card"><div class="row" style="font-weight:600">好友状态待确认</div><div class="row blk">正在同步 LINE 官方账号好友状态，请稍后再查看。</div></div>`:''}
