@@ -683,12 +683,10 @@ function friendCard(){
   if(S.bound && !S.friendKnown) return `<div class="card">
     <div class="row" style="font-weight:600">好友状态待确认</div>
     <div class="row blk">正在同步 LINE 官方账号好友状态，请稍后再查看。</div></div>`;
-  if(S.bound && S.friendKnown && S.friend && !S.mktNotify && !S.marketingPromptDone) return `<div class="card edge">
-    <div class="row" style="font-weight:600">开启优惠通知</div>
-    <div class="row blk">开启后可及时收到积分、优惠券与会员专属优惠（基于消费与偏好推荐）。</div>
-    <div style="padding:0 12px 12px"><div class="b line" onclick="consentMarketing()">开启优惠通知</div>
-    <div class="b ghost" onclick="S.marketingPromptDone=true;render('member')">以后再说</div></div>
-    <div class="note" style="padding:0 12px 10px">存量会员补同意引导：非阻断、可跳过，下次进入仍可在此或设置页开启（BR-17）。</div></div>`;
+  if(S.bound && S.friendKnown && S.friend && !S.mktNotify && !S.marketingPromptDone) return `<div class="card edge" style="padding:10px 12px">
+    <div class="row" style="padding:0 0 6px">开启后可及时收到积分、优惠券与会员专属优惠<span class="v">›</span></div>
+    <div style="display:flex;gap:8px"><div class="b line" style="margin:0;flex:1" onclick="consentMarketing()">开启优惠通知</div>
+    <div class="b ghost" style="margin:0" onclick="S.marketingPromptDone=true;render('member')">以后再说</div></div></div>`;
   return '';
 }
 function consentMarketing(){ S.mktNotify=true; S.marketingPromptDone=true; toast('已同意接收优惠与促销信息，可随时在设置页退订'); render('member'); }
