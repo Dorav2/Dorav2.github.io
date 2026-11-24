@@ -3925,7 +3925,8 @@ html&gt;body{padding:0}&lt;/style&gt;
           if (open) {
             const tr = trigger.getBoundingClientRect();
             menu.classList.add(&#x27;menu-fixed&#x27;);
-            menu.style.width = Math.max(tr.width, 180) + &#x27;px&#x27;;
+            const twoPane = menu.classList.contains(&#x27;group-two-pane&#x27;);
+            menu.style.width = (twoPane ? 400 : Math.max(tr.width, 180)) + &#x27;px&#x27;;
             menu.hidden = false;
             const mw = menu.offsetWidth;
             const menuH = menu.offsetHeight;
